@@ -15,7 +15,7 @@ import {
   SidebarSubLink,
 } from "@/components/Sidebar"
 import { cx, focusRing } from "@/lib/utils"
-import { RiArrowDownSFill, bard-fill } from "@remixicon/react"
+import { RiArrowDownSFill } from "@remixicon/react"
 import { BookText, House, PackageSearch } from "lucide-react"
 import * as React from "react"
 import { Logo } from "../../../../public/Logo"

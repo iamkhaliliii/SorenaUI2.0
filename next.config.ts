@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  reactStrictMode: true,
-  experimental: {}
+  redirects: async () => {
+    return [
+      {
+        source: "/",
+        destination: "/quotes/overview",
+        permanent: true,
+      },
+    ]
+  },
 }
 
 export default nextConfig
