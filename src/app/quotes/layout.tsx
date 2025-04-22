@@ -17,6 +17,10 @@ export default function Layout({
   children: React.ReactNode
 }>) {
   const pathname = usePathname()
+
+  // Determine current page for breadcrumb
+  const currentPage = navigation.find(item => item.href === pathname)?.name || "Quotes"
+
   return (
     <>
       <div className="bg-white dark:bg-gray-925">

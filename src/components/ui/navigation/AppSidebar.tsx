@@ -1,4 +1,5 @@
 "use client"
+import { siteConfig } from "@/app/siteConfig"
 import { Divider } from "@/components/Divider"
 import { Input } from "@/components/Input"
 import {
@@ -14,24 +15,24 @@ import {
   SidebarMenuSub,
   SidebarSubLink,
 } from "@/components/Sidebar"
+import { Logo } from "@/components/ui/Logo"
 import { cx, focusRing } from "@/lib/utils"
 import { RiArrowDownSFill } from "@remixicon/react"
 import { BookText, House, PackageSearch } from "lucide-react"
 import * as React from "react"
-import { Logo } from "../../../../public/Logo"
 import { UserProfile } from "./UserProfile"
 
 const navigation = [
   {
     name: "Home",
-    href: "#",
+    href: siteConfig.baseLinks.home,
     icon: House,
     notifications: false,
     active: false,
   },
   {
     name: "Inbox",
-    href: "#",
+    href: "/inbox",
     icon: PackageSearch,
     notifications: 2,
     active: false,
@@ -46,17 +47,17 @@ const navigation2 = [
     children: [
       {
         name: "Quotes",
-        href: "#",
+        href: siteConfig.baseLinks.quotes.overview,
         active: true,
       },
       {
         name: "Orders",
-        href: "#",
+        href: siteConfig.baseLinks.sales.orders,
         active: false,
       },
       {
         name: "Insights & Reports",
-        href: "#",
+        href: siteConfig.baseLinks.sales.insights,
         active: false,
       },
     ],
@@ -68,17 +69,17 @@ const navigation2 = [
     children: [
       {
         name: "Items",
-        href: "#",
+        href: siteConfig.baseLinks.products.items,
         active: false,
       },
       {
         name: "Variants",
-        href: "#",
+        href: siteConfig.baseLinks.products.variants,
         active: false,
       },
       {
         name: "Suppliers",
-        href: "#",
+        href: siteConfig.baseLinks.products.suppliers,
         active: false,
       },
     ],
@@ -86,10 +87,27 @@ const navigation2 = [
 ] as const
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [activeRoute, setActiveRoute] = React.useState<string>("")
+
+  // Check URL on client side to determine active route
+  React.useEffect(() => {
+    const path = window.location.pathname
+    setActiveRoute(path)
+  }, [])
+
+  // Determine which section is active
+  const isHomeActive = activeRoute === siteConfig.baseLinks.home
+  const isInboxActive = activeRoute.startsWith("/inbox")
+  const isQuotesActive = activeRoute.startsWith("/quotes")
+  const isSalesActive = activeRoute.startsWith("/sales")
+  const isProductsActive = activeRoute.startsWith("/products")
+
+  // Control which submenus are open
   const [openMenus, setOpenMenus] = React.useState<string[]>([
     navigation2[0].name,
     navigation2[1].name,
   ])
+
   const toggleMenu = (name: string) => {
     setOpenMenus((prev: string[]) =>
       prev.includes(name)
@@ -130,8 +148,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {navigation.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarLink
-                    href="#"
-                    isActive={item.active}
+                    href={item.href}
+                    isActive={
+                      item.name === "Home"
+                        ? isHomeActive
+                        : item.name === "Inbox"
+                          ? isInboxActive
+                          : false
+                    }
                     icon={item.icon}
                     notifications={item.notifications}
                   >
@@ -150,7 +174,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu className="space-y-4">
               {navigation2.map((item) => (
                 <SidebarMenuItem key={item.name}>
-                  {/* @CHRIS/SEV: discussion whether to componentize (-> state mgmt) */}
                   <button
                     onClick={() => toggleMenu(item.name)}
                     className={cx(
@@ -182,7 +205,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <SidebarMenuItem key={child.name}>
                           <SidebarSubLink
                             href={child.href}
-                            isActive={child.active}
+                            isActive={
+                              child.name === "Quotes"
+                                ? isQuotesActive && !isInboxActive
+                                : child.name === "Orders"
+                                  ? isSalesActive && activeRoute.includes("/orders")
+                                  : child.name === "Insights & Reports"
+                                    ? isSalesActive && activeRoute.includes("/insights")
+                                    : child.name === "Items"
+                                      ? isProductsActive && activeRoute.includes("/items")
+                                      : child.name === "Variants"
+                                        ? isProductsActive && activeRoute.includes("/variants")
+                                        : child.name === "Suppliers"
+                                          ? isProductsActive && activeRoute.includes("/suppliers")
+                                          : false
+                            }
                           >
                             {child.name}
                           </SidebarSubLink>
