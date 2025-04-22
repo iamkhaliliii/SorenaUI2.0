@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "SorenaUI2.0",
+  name: "Planner",
   url: "https://planner.tremor.so",
   description: "The simplest dashboard template.",
   baseLinks: {
