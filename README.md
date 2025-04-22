@@ -1,6 +1,6 @@
-# Tremor – Planner
+# Tremor – SorenaUI2.0
 
-`Planner` is a SaaS application template from [Tremor](https://tremor.so). It's built
+`SorenaUI2.0` is a SaaS application template from [Tremor](https://tremor.so). It's built
 using [`Tremor`](https://tremor.so/docs/getting-started/installation) and
 [Next.js](https://nextjs.org).
 
