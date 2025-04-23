@@ -1,9 +1,26 @@
 "use client"
 import { Badge } from "@/components/Badge"
-import { AlertCircle, Archive, Bell, CornerDownRight, Filter, Inbox, MessageSquare, Search, Star } from "lucide-react"
+import { Button } from "@/components/Button"
+import { AlertCircle, Archive, Bell, ChevronLeft, CornerDownRight, Filter, Inbox, Menu, MessageSquare, Search, Star, X } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+
+// Add CSS animation styles
+const drawerStyles = `
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+`;
 
 interface Post {
     id: string;
@@ -25,6 +42,37 @@ export default function Layout({
     const pathname = usePathname()
     const [selectedPost, setSelectedPost] = useState<Post | null>(null)
     const [filterOpen, setFilterOpen] = useState(false)
+    const [showDrawer, setShowDrawer] = useState(false)
+    const [showSidebar, setShowSidebar] = useState(false)
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        // Check if we're on mobile on initial load
+        const checkIsMobile = () => {
+            setIsMobile(window.innerWidth < 768)
+        }
+
+        // Set initial state
+        checkIsMobile()
+
+        // Add event listener for window resize
+        window.addEventListener('resize', checkIsMobile)
+
+        // Clean up event listener
+        return () => window.removeEventListener('resize', checkIsMobile)
+    }, [])
+
+    // When a post is selected on mobile, show the drawer
+    useEffect(() => {
+        if (selectedPost && isMobile) {
+            setShowDrawer(true)
+        }
+    }, [selectedPost, isMobile])
+
+    // Close drawer when navigating
+    useEffect(() => {
+        setShowDrawer(false)
+    }, [pathname])
 
     // Simulated post data with enhanced properties
     const posts: Post[] = [
@@ -127,198 +175,265 @@ export default function Layout({
     }
 
     return (
-        <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden">
-            {/* Inbox Sidebar */}
-            <div className="w-[20%] min-w-[200px] shrink-0 border-r border-gray-200 dark:border-gray-800 h-full flex flex-col bg-gray-50 dark:bg-gray-950 overflow-hidden">
-                <div className="p-4 h-14 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
-                    <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50 tracking-tight">Inbox</h1>
+        <>
+            {/* Add animation styles */}
+            <style jsx global>{drawerStyles}</style>
 
-                </div>
-
-                <div className="flex-1 overflow-y-auto py-2 px-2 overscroll-contain">
-                    <div className="mt-2 space-y-1 px-2">
-                        <Link
-                            href="/inbox"
-                            className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox"
-                                ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
-                                : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
+            <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden">
+                {/* Mobile Sidebar Toggle */}
+                {isMobile && (
+                    <div className="fixed top-[4.5rem] left-4 z-40">
+                        <Button
+                            variant="secondary"
+                            className="rounded-full h-10 w-10 shadow-lg bg-white dark:bg-gray-900"
+                            onClick={() => setShowSidebar(true)}
                         >
-                            <span className="flex items-center gap-3">
-                                <Inbox className="h-4 w-4" />
-                                <span>Inbox</span>
-                            </span>
-                            <span className="inline-flex size-5 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
-                                {inboxStats.unread}
-                            </span>
-                        </Link>
-                        <Link
-                            href="/inbox/mentions"
-                            className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox/mentions"
-                                ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
-                                : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
-                        >
-                            <span className="flex items-center gap-3">
-                                <MessageSquare className="h-4 w-4" />
-                                <span>Mentions</span>
-                            </span>
-                        </Link>
-                        <Link
-                            href="/inbox/unassigned"
-                            className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox/unassigned"
-                                ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
-                                : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
-                        >
-                            <span className="flex items-center gap-3">
-                                <AlertCircle className="h-4 w-4" />
-                                <span>Unassigned</span>
-                            </span>
-                            <span className="inline-flex size-5 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
-                                5
-                            </span>
-                        </Link>
-                    </div>
-
-                    <div className="mt-6 space-y-1 px-2">
-                        <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 ml-2 mb-1">Status</h3>
-                        <Link
-                            href="/inbox/replied"
-                            className={`flex items-center rounded-md p-2 text-sm ${pathname === "/inbox/replied"
-                                ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
-                                : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
-                        >
-                            <span className="flex items-center gap-3">
-                                <CornerDownRight className="h-4 w-4" />
-                                <span>Replied</span>
-                            </span>
-                        </Link>
-                        <Link
-                            href="/inbox/starred"
-                            className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox/starred"
-                                ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
-                                : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
-                        >
-                            <span className="flex items-center gap-3">
-                                <Star className="h-4 w-4" />
-                                <span>Starred</span>
-                            </span>
-                            <span className="inline-flex size-5 items-center justify-center rounded-full bg-yellow-100 text-xs font-medium text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400">
-                                {inboxStats.starred}
-                            </span>
-                        </Link>
-                        <Link
-                            href="/inbox/urgent"
-                            className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox/urgent"
-                                ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
-                                : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
-                        >
-                            <span className="flex items-center gap-3">
-                                <Bell className="h-4 w-4" />
-                                <span>Urgent</span>
-                            </span>
-                            <span className="inline-flex size-5 items-center justify-center rounded-full bg-red-100 text-xs font-medium text-red-600 dark:bg-red-500/20 dark:text-red-400">
-                                {inboxStats.urgent}
-                            </span>
-                        </Link>
-                        <Link
-                            href="/inbox/archive"
-                            className={`flex items-center rounded-md p-2 text-sm ${pathname === "/inbox/archive"
-                                ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
-                                : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
-                        >
-                            <span className="flex items-center gap-3">
-                                <Archive className="h-4 w-4" />
-                                <span>Archive</span>
-                            </span>
-                        </Link>
-                    </div>
-                </div>
-
-            </div>
-
-            {/* Posts Column */}
-            <div className="w-[20%] min-w-[200px] border-r border-gray-200 dark:border-gray-800 h-full bg-white dark:bg-gray-950 flex flex-col overflow-hidden">
-                <div className="border-b border-gray-200 dark:border-gray-800 h-14 flex items-center justify-between px-4 flex-shrink-0">
-                    <h2 className="text-base font-medium text-gray-900 dark:text-gray-50">Posts</h2>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setFilterOpen(!filterOpen)}
-                            className={`p-1.5 rounded-md ${filterOpen
-                                ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-200'
-                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
-                        >
-                            <Filter className="h-4 w-4" />
-                        </button>
-                        <button className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
-                            <Search className="h-4 w-4" />
-                        </button>
-                    </div>
-                </div>
-
-                {filterOpen && (
-                    <div className="border-b border-gray-200 dark:border-gray-800 p-3 bg-gray-50 dark:bg-gray-900 flex flex-wrap gap-2 text-xs flex-shrink-0">
-                        <Badge variant="default" className="rounded-full cursor-pointer flex items-center gap-1 bg-white dark:bg-gray-800">
-                            <span>Unread</span>
-                            <span className="text-[10px] font-normal opacity-70">({inboxStats.unread})</span>
-                        </Badge>
-                        <Badge variant="neutral" className="rounded-full cursor-pointer flex items-center gap-1 bg-white dark:bg-gray-800">
-                            <span>Urgent</span>
-                            <span className="text-[10px] font-normal opacity-70">({inboxStats.urgent})</span>
-                        </Badge>
-                        <Badge variant="neutral" className="rounded-full cursor-pointer flex items-center gap-1 bg-white dark:bg-gray-800">
-                            <span>Starred</span>
-                            <span className="text-[10px] font-normal opacity-70">({inboxStats.starred})</span>
-                        </Badge>
+                            <Menu className="h-5 w-5" />
+                        </Button>
                     </div>
                 )}
 
-                <div className="flex-1 overflow-y-auto overscroll-contain">
-                    {posts.map((post) => (
+                {/* Inbox Sidebar - hidden on mobile unless toggled */}
+                <div className={`${isMobile ? 'fixed inset-0 z-50 transform transition-transform duration-300 ease-in-out' : 'w-[16rem] min-w-[200px] shrink-0'} 
+                    ${isMobile && !showSidebar ? '-translate-x-full' : 'translate-x-0'} 
+                    ${isMobile && showSidebar ? 'backdrop-blur-sm bg-black/20 dark:bg-gray-950/80' : ''} 
+                    ${isMobile ? 'min-h-screen' : 'h-full'}`}>
+
+                    <div className={`${isMobile ? 'w-[85%] max-w-[280px] h-full' : 'w-full h-full'} border-r border-gray-200 dark:border-gray-800 flex flex-col bg-gray-50 dark:bg-gray-950 overflow-hidden`}>
+                        <div className="p-4 h-14 border-b border-gray-200 dark:border-gray-800 flex-shrink-0 flex items-center justify-between">
+                            <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50 tracking-tight">Inbox</h1>
+                            {isMobile && (
+                                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => setShowSidebar(false)}>
+                                    <X className="h-5 w-5" />
+                                </Button>
+                            )}
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto py-2 px-2 overscroll-contain">
+                            <div className="mt-2 space-y-1 px-2">
+                                <Link
+                                    href="/inbox"
+                                    className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox"
+                                        ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
+                                        : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
+                                    onClick={() => isMobile && setShowSidebar(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <Inbox className="h-4 w-4" />
+                                        <span>Inbox</span>
+                                    </span>
+                                    <span className="inline-flex size-5 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
+                                        {inboxStats.unread}
+                                    </span>
+                                </Link>
+                                <Link
+                                    href="/inbox/mentions"
+                                    className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox/mentions"
+                                        ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
+                                        : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
+                                    onClick={() => isMobile && setShowSidebar(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <MessageSquare className="h-4 w-4" />
+                                        <span>Mentions</span>
+                                    </span>
+                                </Link>
+                                <Link
+                                    href="/inbox/unassigned"
+                                    className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox/unassigned"
+                                        ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
+                                        : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
+                                    onClick={() => isMobile && setShowSidebar(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <AlertCircle className="h-4 w-4" />
+                                        <span>Unassigned</span>
+                                    </span>
+                                    <span className="inline-flex size-5 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
+                                        5
+                                    </span>
+                                </Link>
+                            </div>
+
+                            <div className="mt-6 space-y-1 px-2">
+                                <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 ml-2 mb-1">Status</h3>
+                                <Link
+                                    href="/inbox/replied"
+                                    className={`flex items-center rounded-md p-2 text-sm ${pathname === "/inbox/replied"
+                                        ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
+                                        : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
+                                    onClick={() => isMobile && setShowSidebar(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <CornerDownRight className="h-4 w-4" />
+                                        <span>Replied</span>
+                                    </span>
+                                </Link>
+                                <Link
+                                    href="/inbox/starred"
+                                    className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox/starred"
+                                        ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
+                                        : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
+                                    onClick={() => isMobile && setShowSidebar(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <Star className="h-4 w-4" />
+                                        <span>Starred</span>
+                                    </span>
+                                    <span className="inline-flex size-5 items-center justify-center rounded-full bg-yellow-100 text-xs font-medium text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400">
+                                        {inboxStats.starred}
+                                    </span>
+                                </Link>
+                                <Link
+                                    href="/inbox/urgent"
+                                    className={`flex items-center justify-between rounded-md p-2 text-sm ${pathname === "/inbox/urgent"
+                                        ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
+                                        : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
+                                    onClick={() => isMobile && setShowSidebar(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <Bell className="h-4 w-4" />
+                                        <span>Urgent</span>
+                                    </span>
+                                    <span className="inline-flex size-5 items-center justify-center rounded-full bg-red-100 text-xs font-medium text-red-600 dark:bg-red-500/20 dark:text-red-400">
+                                        {inboxStats.urgent}
+                                    </span>
+                                </Link>
+                                <Link
+                                    href="/inbox/archive"
+                                    className={`flex items-center rounded-md p-2 text-sm ${pathname === "/inbox/archive"
+                                        ? "bg-white shadow-sm text-blue-600 shadow-blue-100 dark:shadow-none dark:bg-gray-900 dark:text-blue-500 dark:ring-1 dark:ring-gray-800"
+                                        : "text-gray-700 hover:bg-white hover:shadow-sm dark:text-gray-300 hover:dark:bg-gray-900 dark:hover:text-gray-50"}`}
+                                    onClick={() => isMobile && setShowSidebar(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <Archive className="h-4 w-4" />
+                                        <span>Archive</span>
+                                    </span>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Close sidebar when clicking the backdrop on mobile */}
+                    {isMobile && showSidebar && (
                         <div
-                            key={post.id}
-                            className={`border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 px-4 py-3 cursor-pointer transition-colors ${selectedPost?.id === post.id ? 'bg-gray-50 dark:bg-gray-900' : ''
-                                } ${post.isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
-                                }`}
-                            onClick={() => setSelectedPost(post)}
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className={`h-9 w-9 rounded-full ${post.avatarColor || 'bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400'} flex items-center justify-center relative`}>
-                                    {post.sender.charAt(0)}
-                                    {post.isUnread && (
-                                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-white dark:border-gray-950"></span>
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <p className={`text-sm ${post.isUnread ? 'font-semibold' : 'font-medium'} text-gray-900 dark:text-gray-100 truncate`}>{post.sender}</p>
-                                        <div className="flex items-center gap-1">
-                                            {post.priority === 'high' && (
-                                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-1"></span>
-                                            )}
-                                            {post.isStarred && (
-                                                <Star className="h-3 w-3 text-yellow-500 mr-1 fill-yellow-500" />
-                                            )}
-                                            <span className="text-xs text-gray-500">{post.time}</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        {post.category && (
-                                            <span className="inline-block px-1.5 text-[10px] rounded-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                                                {post.category}
-                                            </span>
+                            className="absolute inset-0 -z-10"
+                            onClick={() => setShowSidebar(false)}
+                        />
+                    )}
+                </div>
+
+                {/* Posts Column - full width on mobile */}
+                <div className={`${isMobile ? 'w-full' : 'w-[20rem] min-w-[200px]'} border-r border-gray-200 dark:border-gray-800 h-full bg-white dark:bg-gray-950 flex flex-col overflow-hidden`}>
+                    <div className="border-b border-gray-200 dark:border-gray-800 h-14 flex items-center justify-between px-4 flex-shrink-0">
+                        <h2 className="text-base font-medium text-gray-900 dark:text-gray-50">Posts</h2>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setFilterOpen(!filterOpen)}
+                                className={`p-1.5 rounded-md ${filterOpen
+                                    ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-200'
+                                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                            >
+                                <Filter className="h-4 w-4" />
+                            </button>
+                            <button className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                                <Search className="h-4 w-4" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {filterOpen && (
+                        <div className="border-b border-gray-200 dark:border-gray-800 p-3 bg-gray-50 dark:bg-gray-900 flex flex-wrap gap-2 text-xs flex-shrink-0">
+                            <Badge variant="default" className="rounded-full cursor-pointer flex items-center gap-1 bg-white dark:bg-gray-800">
+                                <span>Unread</span>
+                                <span className="text-[10px] font-normal opacity-70">({inboxStats.unread})</span>
+                            </Badge>
+                            <Badge variant="neutral" className="rounded-full cursor-pointer flex items-center gap-1 bg-white dark:bg-gray-800">
+                                <span>Urgent</span>
+                                <span className="text-[10px] font-normal opacity-70">({inboxStats.urgent})</span>
+                            </Badge>
+                            <Badge variant="neutral" className="rounded-full cursor-pointer flex items-center gap-1 bg-white dark:bg-gray-800">
+                                <span>Starred</span>
+                                <span className="text-[10px] font-normal opacity-70">({inboxStats.starred})</span>
+                            </Badge>
+                        </div>
+                    )}
+
+                    <div className="flex-1 overflow-y-auto overscroll-contain">
+                        {posts.map((post) => (
+                            <div
+                                key={post.id}
+                                className={`border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 px-4 py-3 cursor-pointer transition-colors ${selectedPost?.id === post.id ? 'bg-gray-50 dark:bg-gray-900' : ''
+                                    } ${post.isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                                    }`}
+                                onClick={() => setSelectedPost(post)}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className={`h-9 w-9 rounded-full ${post.avatarColor || 'bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400'} flex items-center justify-center relative`}>
+                                        {post.sender.charAt(0)}
+                                        {post.isUnread && (
+                                            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-white dark:border-gray-950"></span>
                                         )}
-                                        <p className={`text-xs ${post.isUnread ? 'text-gray-800 dark:text-gray-200' : 'text-gray-600 dark:text-gray-400'} truncate`}>{post.message}</p>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <p className={`text-sm ${post.isUnread ? 'font-semibold' : 'font-medium'} text-gray-900 dark:text-gray-100 truncate`}>{post.sender}</p>
+                                            <div className="flex items-center gap-1">
+                                                {post.priority === 'high' && (
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-1"></span>
+                                                )}
+                                                {post.isStarred && (
+                                                    <Star className="h-3 w-3 text-yellow-500 mr-1 fill-yellow-500" />
+                                                )}
+                                                <span className="text-xs text-gray-500">{post.time}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {post.category && (
+                                                <span className="inline-block px-1.5 text-[10px] rounded-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                                    {post.category}
+                                                </span>
+                                            )}
+                                            <p className={`text-xs ${post.isUnread ? 'text-gray-800 dark:text-gray-200' : 'text-gray-600 dark:text-gray-400'} truncate`}>{post.message}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            {/* Main Content */}
-            <div className="flex-1 min-w-[400px] bg-white dark:bg-gray-950 overflow-hidden flex flex-col">
-                {children}
+                {/* Main Content - hidden on mobile unless in drawer */}
+                {isMobile && showDrawer ? (
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-end">
+                        <div className="w-full h-full bg-white dark:bg-gray-950 animate-slide-in-right flex flex-col">
+                            {/* Drawer header with back button */}
+                            <div className="h-14 border-b border-gray-200 dark:border-gray-800 px-4 flex items-center">
+                                <Button
+                                    variant="ghost"
+                                    className="mr-2 h-8 w-8 p-0"
+                                    onClick={() => setShowDrawer(false)}
+                                >
+                                    <ChevronLeft className="h-5 w-5" />
+                                </Button>
+                                <h3 className="font-medium">Message Details</h3>
+                            </div>
+
+                            {/* Drawer content */}
+                            <div className="flex-1 overflow-auto">
+                                {children}
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    !isMobile && (
+                        <div className="flex-1 min-w-[400px] bg-white dark:bg-gray-950 overflow-hidden flex flex-col">
+                            {children}
+                        </div>
+                    )
+                )}
             </div>
-        </div>
+        </>
     )
 } 
