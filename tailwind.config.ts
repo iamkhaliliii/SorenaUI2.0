@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss"
 
-export default {
-  darkMode: "selector",
+const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -11,20 +10,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        gray: { 925: "#050814" },
+        gray: {
+          50: 'rgb(249, 250, 251)',
+          100: 'rgb(243, 244, 246)',
+          200: 'rgb(229, 231, 235)',
+          300: 'rgb(209, 213, 219)',
+          400: 'rgb(156, 163, 175)',
+          500: 'rgb(107, 114, 128)',
+          600: 'rgb(75, 85, 99)',
+          700: 'rgb(55, 65, 81)',
+          800: 'rgb(31, 41, 55)',
+          900: 'rgb(17, 24, 39)',
+          950: 'rgb(3, 7, 18)',
+        },
       },
       keyframes: {
         hide: {
           from: { opacity: "1" },
           to: { opacity: "0" },
-        },
-        drawerSlideLeftAndFade: {
-          from: { opacity: "0", transform: "translateX(-100%)" },
-          to: { opacity: "1", transform: "translateX(0)" },
-        },
-        drawerSlideRightAndFade: {
-          from: { opacity: "1", transform: "translateX(0)" },
-          to: { opacity: "0", transform: "translateX(-100%)" },
         },
         slideDownAndFade: {
           from: { opacity: "0", transform: "translateY(-6px)" },
@@ -52,6 +55,17 @@ export default {
           },
           to: { height: "0px" },
         },
+        dialogOverlayShow: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        dialogContentShow: {
+          from: {
+            opacity: "0",
+            transform: "translate(-50%, -45%) scale(0.95)",
+          },
+          to: { opacity: "1", transform: "translate(-50%, -50%) scale(1)" },
+        },
       },
       animation: {
         hide: "hide 150ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -62,13 +76,17 @@ export default {
         slideUpAndFade: "slideUpAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
         slideRightAndFade:
           "slideRightAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+        // Accordion
         accordionOpen: "accordionOpen 150ms cubic-bezier(0.87, 0, 0.13, 1)",
         accordionClose: "accordionClose 150ms cubic-bezier(0.87, 0, 0.13, 1)",
-        drawerSlideLeftAndFade:
-          "drawerSlideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-        drawerSlideRightAndFade: "drawerSlideRightAndFade 150ms ease-in",
+        // Dialog
+        dialogOverlayShow:
+          "dialogOverlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+        dialogContentShow:
+          "dialogContentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
   },
-  plugins: [],
-} satisfies Config
+  plugins: [require("@tailwindcss/forms")],
+}
+export default config
