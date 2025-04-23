@@ -1,7 +1,7 @@
 "use client"
 import { Badge } from "@/components/Badge"
 import { Button } from "@/components/Button"
-import { AlertCircle, Archive, Bell, ChevronLeft, CornerDownRight, Filter, Inbox, Menu, MessageSquare, Search, Star, X } from "lucide-react"
+import { AlertCircle, Archive, Bell, CornerDownRight, Filter, Inbox, Menu, MessageSquare, Search, Star, X } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
@@ -329,7 +329,7 @@ export default function Layout({
                     <div className="border-b border-gray-200 dark:border-gray-800 h-14 flex items-center justify-between px-4 flex-shrink-0">
                         <div className="flex items-center">
                             {/* Adjust the spacing to make room for the mobile menu button */}
-                            <h2 className={`text-base font-medium text-gray-900 dark:text-gray-50 ${isMobile ? 'ml-8' : ''}`}>Posts</h2>
+                            <h2 className={`text-base font-medium text-gray-900 dark:text-gray-50 ${isMobile ? 'ml-12' : ''}`}>Posts</h2>
                         </div>
                         <div className="flex items-center gap-2">
                             <button
@@ -411,19 +411,7 @@ export default function Layout({
                 {isMobile && showDrawer ? (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-end">
                         <div className="w-full h-full bg-white dark:bg-gray-950 animate-slide-in-right flex flex-col">
-                            {/* Drawer header with back button */}
-                            <div className="h-14 border-b border-gray-200 dark:border-gray-800 px-4 flex items-center">
-                                <Button
-                                    variant="ghost"
-                                    className="mr-2 h-8 w-8 p-0"
-                                    onClick={() => setShowDrawer(false)}
-                                >
-                                    <ChevronLeft className="h-5 w-5" />
-                                </Button>
-                                <h3 className="font-medium">Message Details</h3>
-                            </div>
-
-                            {/* Drawer content */}
+                            {/* Drawer content - without the header */}
                             <div className="flex-1 overflow-auto">
                                 {children}
                             </div>

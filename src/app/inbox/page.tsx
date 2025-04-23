@@ -9,7 +9,7 @@ import {
     TabsList,
     TabsTrigger
 } from "@/components/Tabs"
-import { Calendar, ChevronDown, Clock, ExternalLink, Flag, HelpCircle, Info, MessageCircle, MoreHorizontal, PaperclipIcon, SendHorizontal, Smile, Star, Tag, ThumbsUp, User } from "lucide-react"
+import { Calendar, ChevronDown, ChevronLeft, Clock, ExternalLink, Flag, HelpCircle, Info, MessageCircle, MoreHorizontal, PaperclipIcon, SendHorizontal, Smile, Star, Tag, ThumbsUp, User } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export default function InboxPage() {
@@ -78,6 +78,18 @@ export default function InboxPage() {
                         <div className={`${isMobile ? 'hidden' : 'block'} h-8 w-8 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400 flex items-center justify-center font-medium text-base`}>
                             {selectedMessageData.avatar}
                         </div>
+
+                        {/* Back button in place of avatar on mobile */}
+                        {isMobile && (
+                            <Button
+                                variant="ghost"
+                                className="h-8 w-8 p-0 mr-1"
+                                onClick={() => window.history.back()}
+                            >
+                                <ChevronLeft className="h-5 w-5" />
+                            </Button>
+                        )}
+
                         <div className="flex flex-col">
                             <h1 className="font-medium text-base text-gray-900 dark:text-gray-100 flex items-center gap-2">
                                 <span className="truncate max-w-[120px] sm:max-w-none">{selectedMessageData.sender}</span>
@@ -86,26 +98,38 @@ export default function InboxPage() {
                                 </Button>
                             </h1>
 
-                            {/* Show badges horizontally on mobile */}
-                            <div className={`${isMobile ? 'flex items-center gap-2' : 'hidden'} mt-1`}>
-                                <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800">
-                                    Customer
+                            {/* Show time under name on mobile */}
+                            {isMobile && (
+                                <span className="text-xs text-gray-500 flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    {selectedMessageData.time}
                                 </span>
-                                {selectedMessageData.priority && (
-                                    <span className={`text-xs flex items-center gap-1 ${selectedMessageData.priority === 'high' ? 'text-red-600 dark:text-red-400' :
-                                        selectedMessageData.priority === 'medium' ? 'text-amber-600 dark:text-amber-400' :
-                                            'text-gray-600 dark:text-gray-400'
-                                        }`}>
-                                        <Flag className="h-3 w-3" />
-                                        {selectedMessageData.priority.charAt(0).toUpperCase() + selectedMessageData.priority.slice(1)}
-                                    </span>
-                                )}
-                            </div>
+                            )}
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        {/* Only show timestamp and badges on desktop */}
+                        {/* Show badges in action area on mobile */}
+                        {isMobile && (
+                            <div className="flex items-center gap-1.5 mr-1">
+                                <span className="inline-flex items-center rounded-md bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800">
+                                    Customer
+                                </span>
+                                {selectedMessageData.priority && (
+                                    <span className={`text-xs flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-opacity-50 ring-1 ring-inset ${selectedMessageData.priority === 'high'
+                                            ? 'bg-red-50 text-red-700 ring-red-700/10 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-800'
+                                            : selectedMessageData.priority === 'medium'
+                                                ? 'bg-amber-50 text-amber-700 ring-amber-700/10 dark:bg-amber-900/20 dark:text-amber-400 dark:ring-amber-800'
+                                                : 'bg-gray-50 text-gray-700 ring-gray-700/10 dark:bg-gray-900/20 dark:text-gray-400 dark:ring-gray-800'
+                                        }`}>
+                                        <Flag className="h-3 w-3" />
+                                        {selectedMessageData.priority.charAt(0).toUpperCase()}
+                                    </span>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Only show larger badges on desktop */}
                         <div className={`${isMobile ? 'hidden' : 'flex items-center flex-wrap gap-x-3 gap-y-1'}`}>
                             <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800">
                                 Customer
@@ -124,12 +148,6 @@ export default function InboxPage() {
                                 </span>
                             )}
                         </div>
-
-                        {/* Show time below name on mobile */}
-                        <span className={`${isMobile ? 'flex' : 'hidden'} text-xs text-gray-500 items-center gap-1 absolute right-4 top-8`}>
-                            <Clock className="h-3 w-3" />
-                            {selectedMessageData.time}
-                        </span>
 
                         {/* Action buttons */}
                         <div className="flex items-center">
