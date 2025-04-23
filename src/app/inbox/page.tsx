@@ -74,7 +74,8 @@ export default function InboxPage() {
             <div className="border-b h-14 border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center bg-white dark:bg-gray-950">
                 <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400 flex items-center justify-center font-medium text-base">
+                        {/* Hide avatar on mobile */}
+                        <div className={`${isMobile ? 'hidden' : 'block'} h-8 w-8 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400 flex items-center justify-center font-medium text-base`}>
                             {selectedMessageData.avatar}
                         </div>
                         <div className="flex flex-col">
@@ -85,8 +86,8 @@ export default function InboxPage() {
                                 </Button>
                             </h1>
 
-                            {/* Show these badges stacked on mobile */}
-                            <div className={`${isMobile ? 'flex flex-col items-start gap-1' : 'hidden'}`}>
+                            {/* Show badges horizontally on mobile */}
+                            <div className={`${isMobile ? 'flex items-center gap-2' : 'hidden'} mt-1`}>
                                 <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800">
                                     Customer
                                 </span>
