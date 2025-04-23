@@ -36,6 +36,50 @@ export function Breadcrumbs() {
         }
       }
 
+      // Handle copilot paths
+      else if (pathParts[0] === "copilot") {
+        items.push({ label: "Copilot", href: "/copilot" })
+
+        if (pathParts.length > 1) {
+          const subPage = pathParts[1]
+          const capitalized = subPage.charAt(0).toUpperCase() + subPage.slice(1)
+          items.push({ label: capitalized, href: path })
+        }
+      }
+
+      // Handle analytics paths
+      else if (pathParts[0] === "analytics") {
+        items.push({ label: "Analytics", href: "/analytics" })
+
+        if (pathParts.length > 1) {
+          const subPage = pathParts[1]
+          const capitalized = subPage.charAt(0).toUpperCase() + subPage.slice(1)
+          items.push({ label: capitalized, href: path })
+        }
+      }
+
+      // Handle connections paths
+      else if (pathParts[0] === "connections") {
+        items.push({ label: "Connections", href: "/connections" })
+
+        if (pathParts.length > 1) {
+          const subPage = pathParts[1]
+          const capitalized = subPage.charAt(0).toUpperCase() + subPage.slice(1)
+          items.push({ label: capitalized, href: path })
+        }
+      }
+
+      // Handle knowledge-base paths
+      else if (pathParts[0] === "knowledge-base") {
+        items.push({ label: "Knowledge Base", href: "/knowledge-base" })
+
+        if (pathParts.length > 1) {
+          const subPage = pathParts[1]
+          const capitalized = subPage.charAt(0).toUpperCase() + subPage.slice(1)
+          items.push({ label: capitalized, href: path })
+        }
+      }
+
       // Handle quotes paths
       else if (pathParts[0] === "quotes") {
         items.push({ label: "Quotes", href: "/quotes" })

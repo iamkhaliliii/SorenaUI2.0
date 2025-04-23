@@ -23,8 +23,8 @@ export default function Layout({
     const currentPage = navigation.find(item => item.href === pathname)?.name || "Inbox"
 
     return (
-        <>
-            <div className="bg-white dark:bg-gray-925">
+        <div className="w-full h-full">
+            <div className="bg-white dark:bg-gray-925 min-h-[calc(100vh-4rem)]">
                 <div className="p-4 sm:p-6">
                     <MetricsCards />
                 </div>
@@ -39,8 +39,10 @@ export default function Layout({
                         </TabNavigationLink>
                     ))}
                 </TabNavigation>
-                <>{children}</>
+                <div className="px-4 sm:px-6 py-4">
+                    {children}
+                </div>
             </div>
-        </>
+        </div>
     )
 } 

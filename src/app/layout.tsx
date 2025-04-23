@@ -62,12 +62,13 @@ export default async function RootLayout({
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-white-50 h-full antialiased dark:bg-gray-950`}
-        suppressHydrationWarning={true}
+        suppressHydrationWarning
       >
         <ThemeProvider
           defaultTheme="system"
           disableTransitionOnChange
           attribute="class"
+          enableSystem
         >
           <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
@@ -77,7 +78,7 @@ export default async function RootLayout({
                 <div className="mr-2 h-4 w-px bg-gray-200 dark:bg-gray-800" />
                 <Breadcrumbs />
               </header>
-              <main>{children}</main>
+              <main suppressHydrationWarning>{children}</main>
             </div>
           </SidebarProvider>
         </ThemeProvider>

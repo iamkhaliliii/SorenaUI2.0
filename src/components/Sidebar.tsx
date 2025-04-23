@@ -121,6 +121,7 @@ const SidebarProvider = React.forwardRef<
           className={cx("flex min-h-svh w-full", className)}
           ref={ref}
           {...props}
+          suppressHydrationWarning
         >
           {children}
         </div>
@@ -138,14 +139,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
       return (
         <Drawer open={openMobile} onOpenChange={setOpenMobile} {...props}>
           <DrawerContent
-            // data-sidebar="sidebar"
-            // data-mobile="true"
-            className="bg-gray-50 p-0 text-gray-900"
+            className="bg-gray-50 p-0 text-gray-900 dark:bg-gray-925 dark:text-gray-50"
+            suppressHydrationWarning
           >
             <VisuallyHidden.Root>
               <DrawerTitle>Sidebar</DrawerTitle>
             </VisuallyHidden.Root>
-            <div className="relative flex h-full w-full flex-col">
+            <div className="relative flex h-full w-full flex-col" suppressHydrationWarning>
               <DrawerClose className="absolute right-4 top-4" asChild>
                 <Button
                   variant="ghost"
@@ -164,9 +164,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
     return (
       <div
         ref={ref}
-        className="group peer hidden md:block"
+        className="group peer fixed md:relative hidden md:block"
         data-state={state}
         data-collapsible={state === "collapsed" ? true : false}
+        suppressHydrationWarning
       >
         {/* This is what handles the sidebar gap on desktop */}
         <div
@@ -174,19 +175,22 @@ const Sidebar = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
             "relative h-svh w-[--sidebar-width] bg-transparent transition-[width] duration-150 ease-in-out will-change-transform",
             "group-data-[collapsible=true]:w-0",
           )}
+          suppressHydrationWarning
         />
         <div
           className={cx(
-            "fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] duration-150 ease-in-out will-change-transform md:flex",
+            "fixed inset-y-0 z-20 hidden h-svh w-[--sidebar-width] transition-[left,right,width] duration-150 ease-in-out will-change-transform md:flex",
             "left-0 group-data-[collapsible=true]:left-[calc(var(--sidebar-width)*-1)]",
             "border-r border-gray-200 dark:border-gray-800",
             className,
           )}
           {...props}
+          suppressHydrationWarning
         >
           <div
             data-sidebar="sidebar"
             className="bg-sidebar flex h-full w-full flex-col"
+            suppressHydrationWarning
           >
             {children}
           </div>
@@ -268,7 +272,7 @@ const SidebarHeader = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="header"
-      className={cx("flex flex-col gap-2 p-2", className)}
+      className={cx("flex flex-col gap-2", className)}
       {...props}
     />
   )
