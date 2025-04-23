@@ -22,6 +22,16 @@ const drawerStyles = `
 }
 `;
 
+// Define the inbox layout context interface for TypeScript
+declare global {
+    interface Window {
+        inboxLayoutContext?: {
+            setShowDrawer: (show: boolean) => void;
+            closeDrawer: () => void;
+        };
+    }
+}
+
 interface Post {
     id: string;
     sender: string;
@@ -69,16 +79,12 @@ export default function Layout({
         }
     }, [selectedPost, isMobile])
 
-    // Close drawer when navigating
-    useEffect(() => {
-        setShowDrawer(false)
-    }, [pathname])
-
-    // Make setShowDrawer available to child components
+    // Make setShowDrawer available to child components right after component mounts
     useEffect(() => {
         // Add context to window object for child components to access
         window.inboxLayoutContext = {
-            setShowDrawer
+            setShowDrawer,
+            closeDrawer: () => setShowDrawer(false)
         };
 
         // Clean up
@@ -87,7 +93,12 @@ export default function Layout({
                 delete window.inboxLayoutContext;
             }
         };
-    }, [setShowDrawer]);
+    }, []);  // Empty dependency array means this runs once on mount
+
+    // Close drawer when navigating
+    useEffect(() => {
+        setShowDrawer(false)
+    }, [pathname])
 
     // Simulated post data with enhanced properties
     const posts: Post[] = [
@@ -426,7 +437,15 @@ export default function Layout({
                 {isMobile && showDrawer ? (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-end">
                         <div className="w-full h-full bg-white dark:bg-gray-950 animate-slide-in-right flex flex-col">
-                            {/* Drawer content - without the header */}
+                            {/* Add a visible close button for mobile as a backup */}
+                            <button
+                                className="absolute top-4 left-4 z-50 h-8 w-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+                                onClick={() => setShowDrawer(false)}
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+
+                            {/* Drawer content */}
                             <div className="flex-1 overflow-auto">
                                 {children}
                             </div>

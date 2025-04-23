@@ -17,6 +17,7 @@ declare global {
     interface Window {
         inboxLayoutContext?: {
             setShowDrawer: (show: boolean) => void;
+            closeDrawer: () => void;
         };
     }
 }
@@ -78,8 +79,10 @@ export default function InboxPage() {
     }
 
     const closeDrawer = () => {
-        // Use the layout's setShowDrawer if available
-        if (window.inboxLayoutContext?.setShowDrawer) {
+        // Use the layout's closeDrawer if available
+        if (window.inboxLayoutContext?.closeDrawer) {
+            window.inboxLayoutContext.closeDrawer();
+        } else if (window.inboxLayoutContext?.setShowDrawer) {
             window.inboxLayoutContext.setShowDrawer(false);
         }
     };
