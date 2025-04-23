@@ -327,7 +327,10 @@ export default function Layout({
                 {/* Posts Column - full width on mobile */}
                 <div className={`${isMobile ? 'w-full' : 'w-[20rem] min-w-[200px]'} border-r border-gray-200 dark:border-gray-800 h-full bg-white dark:bg-gray-950 flex flex-col overflow-hidden`}>
                     <div className="border-b border-gray-200 dark:border-gray-800 h-14 flex items-center justify-between px-4 flex-shrink-0">
-                        <h2 className="text-base font-medium text-gray-900 dark:text-gray-50">Posts</h2>
+                        <div className="flex items-center">
+                            {/* Adjust the spacing to make room for the mobile menu button */}
+                            <h2 className={`text-base font-medium text-gray-900 dark:text-gray-50 ${isMobile ? 'ml-8' : ''}`}>Posts</h2>
+                        </div>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setFilterOpen(!filterOpen)}

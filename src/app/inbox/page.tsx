@@ -10,10 +10,27 @@ import {
     TabsTrigger
 } from "@/components/Tabs"
 import { Calendar, ChevronDown, Clock, ExternalLink, Flag, HelpCircle, Info, MessageCircle, MoreHorizontal, PaperclipIcon, SendHorizontal, Smile, Star, Tag, ThumbsUp, User } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function InboxPage() {
     const [messageText, setMessageText] = useState("")
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        // Check if we're on mobile on initial load
+        const checkIsMobile = () => {
+            setIsMobile(window.innerWidth < 768)
+        }
+
+        // Set initial state
+        checkIsMobile()
+
+        // Add event listener for window resize
+        window.addEventListener('resize', checkIsMobile)
+
+        // Clean up event listener
+        return () => window.removeEventListener('resize', checkIsMobile)
+    }, [])
 
     const selectedMessageData = {
         id: "1",
@@ -53,34 +70,25 @@ export default function InboxPage() {
 
     return (
         <div className="h-full flex flex-col">
-            {/* Enhanced Header with user info */}
-            <div className="border-b h-14 border-gray-200 dark:border-gray-800 px-4 py-3 flex flex-col bg-white dark:bg-gray-950">
-                {/* Top row with breadcrumb and actions */}
-
-                {/* Main header content */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+            {/* Enhanced Header with user info - improved for mobile */}
+            <div className="border-b h-14 border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center bg-white dark:bg-gray-950">
+                <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
                         <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400 flex items-center justify-center font-medium text-base">
                             {selectedMessageData.avatar}
                         </div>
                         <div className="flex flex-col">
                             <h1 className="font-medium text-base text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                {selectedMessageData.sender}
+                                <span className="truncate max-w-[120px] sm:max-w-none">{selectedMessageData.sender}</span>
                                 <Button variant="ghost" onClick={toggleStar} className="p-0.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full">
                                     <Star className={`h-4 w-4 ${selectedMessageData.isStarred ? 'fill-yellow-400 text-yellow-400' : ''}`} />
                                 </Button>
                             </h1>
-                        </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1.5">
-                        <div className="flex items-center gap-1">
-                            <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-0.5">
+
+                            {/* Show these badges stacked on mobile */}
+                            <div className={`${isMobile ? 'flex flex-col items-start gap-1' : 'hidden'}`}>
                                 <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800">
                                     Customer
-                                </span>
-                                <span className="text-xs text-gray-500 flex items-center gap-1">
-                                    <Clock className="h-3 w-3" />
-                                    {selectedMessageData.timestamp}
                                 </span>
                                 {selectedMessageData.priority && (
                                     <span className={`text-xs flex items-center gap-1 ${selectedMessageData.priority === 'high' ? 'text-red-600 dark:text-red-400' :
@@ -88,21 +96,49 @@ export default function InboxPage() {
                                             'text-gray-600 dark:text-gray-400'
                                         }`}>
                                         <Flag className="h-3 w-3" />
-                                        {selectedMessageData.priority.charAt(0).toUpperCase() + selectedMessageData.priority.slice(1)} Priority
+                                        {selectedMessageData.priority.charAt(0).toUpperCase() + selectedMessageData.priority.slice(1)}
                                     </span>
                                 )}
                             </div>
+                        </div>
+                    </div>
 
-                            <div className="relative">
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <ExternalLink className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </div>
+                    <div className="flex items-center gap-2">
+                        {/* Only show timestamp and badges on desktop */}
+                        <div className={`${isMobile ? 'hidden' : 'flex items-center flex-wrap gap-x-3 gap-y-1'}`}>
+                            <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800">
+                                Customer
+                            </span>
+                            <span className="text-xs text-gray-500 flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {selectedMessageData.timestamp}
+                            </span>
+                            {selectedMessageData.priority && (
+                                <span className={`text-xs flex items-center gap-1 ${selectedMessageData.priority === 'high' ? 'text-red-600 dark:text-red-400' :
+                                    selectedMessageData.priority === 'medium' ? 'text-amber-600 dark:text-amber-400' :
+                                        'text-gray-600 dark:text-gray-400'
+                                    }`}>
+                                    <Flag className="h-3 w-3" />
+                                    {selectedMessageData.priority.charAt(0).toUpperCase() + selectedMessageData.priority.slice(1)} Priority
+                                </span>
+                            )}
                         </div>
 
+                        {/* Show time below name on mobile */}
+                        <span className={`${isMobile ? 'flex' : 'hidden'} text-xs text-gray-500 items-center gap-1 absolute right-4 top-8`}>
+                            <Clock className="h-3 w-3" />
+                            {selectedMessageData.time}
+                        </span>
+
+                        {/* Action buttons */}
+                        <div className="flex items-center">
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <ExternalLink className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
