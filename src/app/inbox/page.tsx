@@ -25,6 +25,7 @@ declare global {
 export default function InboxPage() {
     const [messageText, setMessageText] = useState("")
     const [isMobile, setIsMobile] = useState(false)
+    const [activeTab, setActiveTab] = useState("messages")
 
     useEffect(() => {
         // Check if we're on mobile on initial load
@@ -182,8 +183,12 @@ export default function InboxPage() {
             </div>
 
             {/* Tabs */}
-            <Tabs defaultValue="messages" className="flex-1 flex flex-col h-full">
-                <div className="pt-4  border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+            <Tabs
+                defaultValue="messages"
+                className="flex-1 flex flex-col h-full"
+                onValueChange={(value) => setActiveTab(value)}
+            >
+                <div className="pt-4 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
                     <TabsList variant="line">
                         <TabsTrigger value="messages" className="flex items-center gap-2">
                             <MessageCircle className="h-4 w-4" />
@@ -196,62 +201,30 @@ export default function InboxPage() {
                     </TabsList>
                 </div>
 
-                {/* Messages Tab Content - Using data-state to handle the flex layout */}
-                <TabsContent
-                    value="messages"
-                    className="h-full bg-gray-50 dark:bg-gray-950"
-                    forceMount
-                >
-                    <div className="flex flex-col h-full" data-tab-content="messages">
-                        <div className="flex-1 overflow-auto">
-                            <div className="max-w-3xl mx-auto py-6 px-4 space-y-8">
-                                {/* Original Message */}
-                                <div className="relative">
-                                    <div className="flex items-start gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400 flex items-center justify-center font-medium flex-shrink-0">
-                                            {selectedMessageData.avatar}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{selectedMessageData.sender}</p>
-                                                <Badge variant="neutral" className="text-[10px] py-0 px-1.5">Customer</Badge>
-                                                <span className="text-xs text-gray-500">{selectedMessageData.time}</span>
-                                            </div>
-                                            <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
-                                                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                                                    {selectedMessageData.content}
-                                                </p>
-                                            </div>
-                                            <div className="flex mt-2 items-center gap-1.5">
-                                                <Button variant="ghost" className="h-7 rounded-full px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 text-xs">
-                                                    <ThumbsUp className="h-3.5 w-3.5 mr-1" />
-                                                    Reply
-                                                </Button>
-                                                <Button variant="ghost" className="h-7 rounded-full px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 text-xs">
-                                                    <Smile className="h-3.5 w-3.5 mr-1" />
-                                                    React
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Replies */}
-                                {selectedMessageData.replies.map(reply => (
-                                    <div key={reply.id} className="relative">
+                {/* Messages Tab Content */}
+                <div className={`h-full ${activeTab === "messages" ? "block" : "hidden"}`}>
+                    <TabsContent
+                        value="messages"
+                        className="h-full bg-gray-50 dark:bg-gray-950"
+                    >
+                        <div className="flex flex-col h-full">
+                            <div className="flex-1 overflow-auto">
+                                <div className="max-w-3xl mx-auto py-6 px-4 space-y-8">
+                                    {/* Original Message */}
+                                    <div className="relative">
                                         <div className="flex items-start gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400 flex items-center justify-center font-medium flex-shrink-0">
-                                                {reply.avatar}
+                                            <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400 flex items-center justify-center font-medium flex-shrink-0">
+                                                {selectedMessageData.avatar}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 mb-1">
-                                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{reply.sender}</p>
-                                                    <Badge variant="success" className="text-[10px] py-0 px-1.5">{reply.role}</Badge>
-                                                    <span className="text-xs text-gray-500">{reply.time}</span>
+                                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{selectedMessageData.sender}</p>
+                                                    <Badge variant="neutral" className="text-[10px] py-0 px-1.5">Customer</Badge>
+                                                    <span className="text-xs text-gray-500">{selectedMessageData.time}</span>
                                                 </div>
                                                 <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
                                                     <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                                                        {reply.content}
+                                                        {selectedMessageData.content}
                                                     </p>
                                                 </div>
                                                 <div className="flex mt-2 items-center gap-1.5">
@@ -267,213 +240,238 @@ export default function InboxPage() {
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
 
-                        {/* Input Area - Now only in Messages tab */}
-                        <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4 mt-auto">
-                            <div className="flex items-end gap-3 max-w-3xl mx-auto">
-                                <div className="flex-1 relative">
-                                    <Input
-                                        placeholder="Write your message..."
-                                        value={messageText}
-                                        onChange={(e) => setMessageText(e.target.value)}
-                                        className="min-h-[80px] py-3 pl-4 pr-10 text-sm resize-none overflow-auto"
-                                    />
-                                    <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                        <PaperclipIcon className="h-5 w-5" />
-                                    </button>
+                                    {/* Replies */}
+                                    {selectedMessageData.replies.map(reply => (
+                                        <div key={reply.id} className="relative">
+                                            <div className="flex items-start gap-3">
+                                                <div className="h-10 w-10 rounded-full bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400 flex items-center justify-center font-medium flex-shrink-0">
+                                                    {reply.avatar}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{reply.sender}</p>
+                                                        <Badge variant="success" className="text-[10px] py-0 px-1.5">{reply.role}</Badge>
+                                                        <span className="text-xs text-gray-500">{reply.time}</span>
+                                                    </div>
+                                                    <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
+                                                        <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                                                            {reply.content}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex mt-2 items-center gap-1.5">
+                                                        <Button variant="ghost" className="h-7 rounded-full px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 text-xs">
+                                                            <ThumbsUp className="h-3.5 w-3.5 mr-1" />
+                                                            Reply
+                                                        </Button>
+                                                        <Button variant="ghost" className="h-7 rounded-full px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 text-xs">
+                                                            <Smile className="h-3.5 w-3.5 mr-1" />
+                                                            React
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                                <Button
-                                    onClick={handleSendMessage}
-                                    disabled={!messageText.trim()}
-                                    className="h-10 w-10 p-0 rounded-full flex items-center justify-center"
-                                >
-                                    <SendHorizontal className="h-5 w-5" />
-                                </Button>
                             </div>
-                            <div className="flex items-center justify-between mt-2 max-w-3xl mx-auto">
-                                <div className="flex items-center gap-2">
-                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
-                                        <Smile className="h-5 w-5" />
-                                    </button>
-                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
-                                        <PaperclipIcon className="h-5 w-5" />
-                                    </button>
+
+                            {/* Input Area - Now only in Messages tab */}
+                            <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4 mt-auto">
+                                <div className="flex items-end gap-3 max-w-3xl mx-auto">
+                                    <div className="flex-1 relative">
+                                        <Input
+                                            placeholder="Write your message..."
+                                            value={messageText}
+                                            onChange={(e) => setMessageText(e.target.value)}
+                                            className="min-h-[80px] py-3 pl-4 pr-10 text-sm resize-none overflow-auto"
+                                        />
+                                        <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                            <PaperclipIcon className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                    <Button
+                                        onClick={handleSendMessage}
+                                        disabled={!messageText.trim()}
+                                        className="h-10 w-10 p-0 rounded-full flex items-center justify-center"
+                                    >
+                                        <SendHorizontal className="h-5 w-5" />
+                                    </Button>
                                 </div>
-                                <div className="text-xs text-gray-400">
-                                    Use @ to mention colleagues
+                                <div className="flex items-center justify-between mt-2 max-w-3xl mx-auto">
+                                    <div className="flex items-center gap-2">
+                                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
+                                            <Smile className="h-5 w-5" />
+                                        </button>
+                                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
+                                            <PaperclipIcon className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                    <div className="text-xs text-gray-400">
+                                        Use @ to mention colleagues
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </TabsContent>
+                    </TabsContent>
+                </div>
 
                 {/* Insights Tab Content */}
-                <TabsContent value="insights" className="h-full overflow-auto bg-gray-50 dark:bg-gray-950">
-                    <div className="max-w-3xl mx-auto py-6 px-4 pb-20">
-                        <div className="grid sm:grid-cols-2 gap-6">
-                            {/* Analysis Cards */}
-                            <Card className="p-4 space-y-2 overflow-hidden">
-                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                    <Flag className="h-4 w-4 text-amber-500" />
-                                    <span>Sentiment Analysis</span>
-                                </h3>
-                                <div className="flex flex-col">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-xs text-gray-500">Sentiment Score</span>
-                                        <Badge variant="default" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-                                            Neutral
+                <div className={`h-full ${activeTab === "insights" ? "block" : "hidden"}`}>
+                    <TabsContent
+                        value="insights"
+                        className="h-full overflow-auto bg-gray-50 dark:bg-gray-950"
+                    >
+                        <div className="max-w-3xl mx-auto py-6 px-4 pb-20">
+                            <div className="grid sm:grid-cols-2 gap-6">
+                                {/* Analysis Cards */}
+                                <Card className="p-4 space-y-2 overflow-hidden">
+                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                        <Flag className="h-4 w-4 text-amber-500" />
+                                        <span>Sentiment Analysis</span>
+                                    </h3>
+                                    <div className="flex flex-col">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-xs text-gray-500">Sentiment Score</span>
+                                            <Badge variant="default" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                                                Neutral
+                                            </Badge>
+                                        </div>
+                                        <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                            <div className="h-full bg-amber-500 rounded-full" style={{ width: '50%' }}></div>
+                                        </div>
+                                        <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                                            <span>Negative</span>
+                                            <span>Neutral</span>
+                                            <span>Positive</span>
+                                        </div>
+                                    </div>
+                                </Card>
+
+                                <Card className="p-4 space-y-2">
+                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                        <User className="h-4 w-4 text-blue-500" />
+                                        <span>Customer Profile</span>
+                                    </h3>
+                                    <div className="space-y-3 text-xs">
+                                        <div className="flex items-start">
+                                            <span className="w-24 text-gray-500">User ID</span>
+                                            <span className="text-gray-700 dark:text-gray-300 font-mono">#12345</span>
+                                        </div>
+                                        <div className="flex items-start">
+                                            <span className="w-24 text-gray-500">Joined</span>
+                                            <span className="text-gray-700 dark:text-gray-300">5 months ago</span>
+                                        </div>
+                                        <div className="flex items-start">
+                                            <span className="w-24 text-gray-500">Activity</span>
+                                            <span className="text-gray-700 dark:text-gray-300">15 previous messages</span>
+                                        </div>
+                                    </div>
+                                </Card>
+
+                                {/* Summary Card */}
+                                <Card className="p-4 space-y-3 sm:col-span-2">
+                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                        <MessageCircle className="h-4 w-4 text-indigo-500" />
+                                        <span>Message Summary</span>
+                                    </h3>
+                                    <div className="bg-indigo-50 border border-indigo-100 rounded-md p-3 text-sm text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-800/30 dark:text-indigo-400">
+                                        User is requesting the ability to react with emojis to direct messages in the Bettermode platform.
+                                    </div>
+
+                                    <h4 className="text-xs font-medium text-gray-500 mt-2">Key Insights</h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                        <div className="bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-800 flex items-start">
+                                            <HelpCircle className="h-4 w-4 text-blue-500 mr-2 mt-0.5" />
+                                            <span className="text-gray-700 dark:text-gray-300">Feature request for emoji reactions</span>
+                                        </div>
+                                        <div className="bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-800 flex items-start">
+                                            <ThumbsUp className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+                                            <span className="text-gray-700 dark:text-gray-300">Positive engagement with platform features</span>
+                                        </div>
+                                    </div>
+                                </Card>
+
+                                {/* Details */}
+                                <Card className="p-4 space-y-3 sm:col-span-2">
+                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Info className="h-4 w-4 text-gray-500" />
+                                            <span>Message Details</span>
+                                        </div>
+                                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                            <ChevronDown className="h-4 w-4" />
+                                        </button>
+                                    </h3>
+                                    <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
+                                        <div className="flex items-start">
+                                            <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
+                                                <Tag className="h-3.5 w-3.5" />
+                                                <span>Category</span>
+                                            </span>
+                                            <span className="text-xs text-gray-700 dark:text-gray-300">Feature Requests</span>
+                                        </div>
+                                        <div className="flex items-start">
+                                            <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
+                                                <Calendar className="h-3.5 w-3.5" />
+                                                <span>Created</span>
+                                            </span>
+                                            <span className="text-xs text-gray-700 dark:text-gray-300">3 hours ago</span>
+                                        </div>
+                                        <div className="flex items-start">
+                                            <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
+                                                <Clock className="h-3.5 w-3.5" />
+                                                <span>Response</span>
+                                            </span>
+                                            <span className="text-xs text-gray-700 dark:text-gray-300">42 minutes</span>
+                                        </div>
+                                        <div className="flex items-start">
+                                            <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
+                                                <Flag className="h-3.5 w-3.5" />
+                                                <span>Status</span>
+                                            </span>
+                                            <Badge variant="default" className="bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+                                                In progress
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                </Card>
+
+                                {/* Tags */}
+                                <Card className="p-4 space-y-3 sm:col-span-2">
+                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Tag className="h-4 w-4 text-gray-500" />
+                                            <span>Tags</span>
+                                        </div>
+                                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                            <ChevronDown className="h-4 w-4" />
+                                        </button>
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                                            <Tag className="h-3 w-3 mr-1" />
+                                            feature-request
+                                        </Badge>
+                                        <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                                            <Tag className="h-3 w-3 mr-1" />
+                                            messaging
+                                        </Badge>
+                                        <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                                            <Tag className="h-3 w-3 mr-1" />
+                                            reactions
+                                        </Badge>
+                                        <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                                            <Tag className="h-3 w-3 mr-1" />
+                                            emoji
                                         </Badge>
                                     </div>
-                                    <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                        <div className="h-full bg-amber-500 rounded-full" style={{ width: '50%' }}></div>
-                                    </div>
-                                    <div className="flex justify-between text-[10px] text-gray-500 mt-1">
-                                        <span>Negative</span>
-                                        <span>Neutral</span>
-                                        <span>Positive</span>
-                                    </div>
-                                </div>
-                            </Card>
-
-                            <Card className="p-4 space-y-2">
-                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                    <User className="h-4 w-4 text-blue-500" />
-                                    <span>Customer Profile</span>
-                                </h3>
-                                <div className="space-y-3 text-xs">
-                                    <div className="flex items-start">
-                                        <span className="w-24 text-gray-500">User ID</span>
-                                        <span className="text-gray-700 dark:text-gray-300 font-mono">#12345</span>
-                                    </div>
-                                    <div className="flex items-start">
-                                        <span className="w-24 text-gray-500">Joined</span>
-                                        <span className="text-gray-700 dark:text-gray-300">5 months ago</span>
-                                    </div>
-                                    <div className="flex items-start">
-                                        <span className="w-24 text-gray-500">Activity</span>
-                                        <span className="text-gray-700 dark:text-gray-300">15 previous messages</span>
-                                    </div>
-                                </div>
-                            </Card>
-
-                            {/* Summary Card */}
-                            <Card className="p-4 space-y-3 sm:col-span-2">
-                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                    <MessageCircle className="h-4 w-4 text-indigo-500" />
-                                    <span>Message Summary</span>
-                                </h3>
-                                <div className="bg-indigo-50 border border-indigo-100 rounded-md p-3 text-sm text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-800/30 dark:text-indigo-400">
-                                    User is requesting the ability to react with emojis to direct messages in the Bettermode platform.
-                                </div>
-
-                                <h4 className="text-xs font-medium text-gray-500 mt-2">Key Insights</h4>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                                    <div className="bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-800 flex items-start">
-                                        <HelpCircle className="h-4 w-4 text-blue-500 mr-2 mt-0.5" />
-                                        <span className="text-gray-700 dark:text-gray-300">Feature request for emoji reactions</span>
-                                    </div>
-                                    <div className="bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-800 flex items-start">
-                                        <ThumbsUp className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
-                                        <span className="text-gray-700 dark:text-gray-300">Positive engagement with platform features</span>
-                                    </div>
-                                </div>
-                            </Card>
-
-                            {/* Details */}
-                            <Card className="p-4 space-y-3 sm:col-span-2">
-                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Info className="h-4 w-4 text-gray-500" />
-                                        <span>Message Details</span>
-                                    </div>
-                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                        <ChevronDown className="h-4 w-4" />
-                                    </button>
-                                </h3>
-                                <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
-                                    <div className="flex items-start">
-                                        <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
-                                            <Tag className="h-3.5 w-3.5" />
-                                            <span>Category</span>
-                                        </span>
-                                        <span className="text-xs text-gray-700 dark:text-gray-300">Feature Requests</span>
-                                    </div>
-                                    <div className="flex items-start">
-                                        <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
-                                            <Calendar className="h-3.5 w-3.5" />
-                                            <span>Created</span>
-                                        </span>
-                                        <span className="text-xs text-gray-700 dark:text-gray-300">3 hours ago</span>
-                                    </div>
-                                    <div className="flex items-start">
-                                        <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
-                                            <Clock className="h-3.5 w-3.5" />
-                                            <span>Response</span>
-                                        </span>
-                                        <span className="text-xs text-gray-700 dark:text-gray-300">42 minutes</span>
-                                    </div>
-                                    <div className="flex items-start">
-                                        <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
-                                            <Flag className="h-3.5 w-3.5" />
-                                            <span>Status</span>
-                                        </span>
-                                        <Badge variant="default" className="bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
-                                            In progress
-                                        </Badge>
-                                    </div>
-                                </div>
-                            </Card>
-
-                            {/* Tags */}
-                            <Card className="p-4 space-y-3 sm:col-span-2">
-                                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Tag className="h-4 w-4 text-gray-500" />
-                                        <span>Tags</span>
-                                    </div>
-                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                        <ChevronDown className="h-4 w-4" />
-                                    </button>
-                                </h3>
-                                <div className="flex flex-wrap gap-2">
-                                    <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                                        <Tag className="h-3 w-3 mr-1" />
-                                        feature-request
-                                    </Badge>
-                                    <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                                        <Tag className="h-3 w-3 mr-1" />
-                                        messaging
-                                    </Badge>
-                                    <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                                        <Tag className="h-3 w-3 mr-1" />
-                                        reactions
-                                    </Badge>
-                                    <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                                        <Tag className="h-3 w-3 mr-1" />
-                                        emoji
-                                    </Badge>
-                                </div>
-                            </Card>
+                                </Card>
+                            </div>
                         </div>
-                    </div>
-                </TabsContent>
+                    </TabsContent>
+                </div>
             </Tabs>
-
-            {/* Add CSS for fixing the tab display behavior */}
-            <style jsx global>{`
-                [data-tab-content="messages"] {
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                }
-                
-                [data-state="inactive"] [data-tab-content="messages"] {
-                    display: none;
-                }
-            `}</style>
         </div>
     )
 } 
