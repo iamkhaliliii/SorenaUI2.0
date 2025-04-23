@@ -12,6 +12,15 @@ import {
 import { Calendar, ChevronDown, ChevronLeft, Clock, ExternalLink, Flag, HelpCircle, Info, MessageCircle, MoreHorizontal, PaperclipIcon, SendHorizontal, Smile, Star, Tag, ThumbsUp, User } from "lucide-react"
 import { useEffect, useState } from "react"
 
+// Get access to the parent layout's setShowDrawer function
+declare global {
+    interface Window {
+        inboxLayoutContext?: {
+            setShowDrawer: (show: boolean) => void;
+        };
+    }
+}
+
 export default function InboxPage() {
     const [messageText, setMessageText] = useState("")
     const [isMobile, setIsMobile] = useState(false)
@@ -68,6 +77,13 @@ export default function InboxPage() {
         }
     }
 
+    const closeDrawer = () => {
+        // Use the layout's setShowDrawer if available
+        if (window.inboxLayoutContext?.setShowDrawer) {
+            window.inboxLayoutContext.setShowDrawer(false);
+        }
+    };
+
     return (
         <div className="h-full flex flex-col">
             {/* Enhanced Header with user info - improved for mobile */}
@@ -84,7 +100,7 @@ export default function InboxPage() {
                             <Button
                                 variant="ghost"
                                 className="h-8 w-8 p-0 mr-1"
-                                onClick={() => window.history.back()}
+                                onClick={closeDrawer}
                             >
                                 <ChevronLeft className="h-5 w-5" />
                             </Button>
@@ -287,7 +303,7 @@ export default function InboxPage() {
 
                 {/* Insights Tab Content */}
                 <TabsContent value="insights" className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-950">
-                    <div className="max-w-3xl mx-auto py-6 px-4">
+                    <div className="max-w-3xl mx-auto py-6 px-4 pb-20">
                         <div className="grid sm:grid-cols-2 gap-6">
                             {/* Analysis Cards */}
                             <Card className="p-4 space-y-2 overflow-hidden">

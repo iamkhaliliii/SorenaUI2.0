@@ -74,6 +74,21 @@ export default function Layout({
         setShowDrawer(false)
     }, [pathname])
 
+    // Make setShowDrawer available to child components
+    useEffect(() => {
+        // Add context to window object for child components to access
+        window.inboxLayoutContext = {
+            setShowDrawer
+        };
+
+        // Clean up
+        return () => {
+            if (window.inboxLayoutContext) {
+                delete window.inboxLayoutContext;
+            }
+        };
+    }, [setShowDrawer]);
+
     // Simulated post data with enhanced properties
     const posts: Post[] = [
         {
