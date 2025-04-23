@@ -9,7 +9,7 @@ import {
     TabsList,
     TabsTrigger
 } from "@/components/Tabs"
-import { Calendar, ChevronDown, ChevronLeft, Clock, ExternalLink, Flag, HelpCircle, Info, MessageCircle, MoreHorizontal, PaperclipIcon, SendHorizontal, Smile, Star, Tag, ThumbsUp, User } from "lucide-react"
+import { Calendar, ChevronDown, Clock, ExternalLink, Flag, HelpCircle, Info, MessageCircle, MoreHorizontal, PaperclipIcon, SendHorizontal, Smile, Star, Tag, ThumbsUp, User } from "lucide-react"
 import { useEffect, useState } from "react"
 
 // Get access to the parent layout's setShowDrawer function
@@ -105,7 +105,7 @@ export default function InboxPage() {
                                 className="h-8 w-8 p-0 mr-1"
                                 onClick={closeDrawer}
                             >
-                                <ChevronLeft className="h-5 w-5" />
+                                <div className="h-5 w-5" ></div>
                             </Button>
                         )}
 
@@ -196,57 +196,30 @@ export default function InboxPage() {
                     </TabsList>
                 </div>
 
-                {/* Messages Tab Content */}
-                <TabsContent value="messages" className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-950 flex flex-col">
-                    <div className="flex-1 overflow-auto">
-                        <div className="max-w-3xl mx-auto py-6 px-4 space-y-8">
-                            {/* Original Message */}
-                            <div className="relative">
-                                <div className="flex items-start gap-3">
-                                    <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400 flex items-center justify-center font-medium flex-shrink-0">
-                                        {selectedMessageData.avatar}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{selectedMessageData.sender}</p>
-                                            <Badge variant="neutral" className="text-[10px] py-0 px-1.5">Customer</Badge>
-                                            <span className="text-xs text-gray-500">{selectedMessageData.time}</span>
-                                        </div>
-                                        <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
-                                            <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                                                {selectedMessageData.content}
-                                            </p>
-                                        </div>
-                                        <div className="flex mt-2 items-center gap-1.5">
-                                            <Button variant="ghost" className="h-7 rounded-full px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 text-xs">
-                                                <ThumbsUp className="h-3.5 w-3.5 mr-1" />
-                                                Reply
-                                            </Button>
-                                            <Button variant="ghost" className="h-7 rounded-full px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 text-xs">
-                                                <Smile className="h-3.5 w-3.5 mr-1" />
-                                                React
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Replies */}
-                            {selectedMessageData.replies.map(reply => (
-                                <div key={reply.id} className="relative">
+                {/* Messages Tab Content - Using data-state to handle the flex layout */}
+                <TabsContent
+                    value="messages"
+                    className="h-full bg-gray-50 dark:bg-gray-950"
+                    forceMount
+                >
+                    <div className="flex flex-col h-full" data-tab-content="messages">
+                        <div className="flex-1 overflow-auto">
+                            <div className="max-w-3xl mx-auto py-6 px-4 space-y-8">
+                                {/* Original Message */}
+                                <div className="relative">
                                     <div className="flex items-start gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400 flex items-center justify-center font-medium flex-shrink-0">
-                                            {reply.avatar}
+                                        <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400 flex items-center justify-center font-medium flex-shrink-0">
+                                            {selectedMessageData.avatar}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-1">
-                                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{reply.sender}</p>
-                                                <Badge variant="success" className="text-[10px] py-0 px-1.5">{reply.role}</Badge>
-                                                <span className="text-xs text-gray-500">{reply.time}</span>
+                                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{selectedMessageData.sender}</p>
+                                                <Badge variant="neutral" className="text-[10px] py-0 px-1.5">Customer</Badge>
+                                                <span className="text-xs text-gray-500">{selectedMessageData.time}</span>
                                             </div>
                                             <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
                                                 <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                                                    {reply.content}
+                                                    {selectedMessageData.content}
                                                 </p>
                                             </div>
                                             <div className="flex mt-2 items-center gap-1.5">
@@ -262,50 +235,83 @@ export default function InboxPage() {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
 
-                    {/* Input Area - Now only in Messages tab */}
-                    <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4 mt-auto">
-                        <div className="flex items-end gap-3 max-w-3xl mx-auto">
-                            <div className="flex-1 relative">
-                                <Input
-                                    placeholder="Write your message..."
-                                    value={messageText}
-                                    onChange={(e) => setMessageText(e.target.value)}
-                                    className="min-h-[80px] py-3 pl-4 pr-10 text-sm resize-none overflow-auto"
-                                />
-                                <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                    <PaperclipIcon className="h-5 w-5" />
-                                </button>
+                                {/* Replies */}
+                                {selectedMessageData.replies.map(reply => (
+                                    <div key={reply.id} className="relative">
+                                        <div className="flex items-start gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400 flex items-center justify-center font-medium flex-shrink-0">
+                                                {reply.avatar}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{reply.sender}</p>
+                                                    <Badge variant="success" className="text-[10px] py-0 px-1.5">{reply.role}</Badge>
+                                                    <span className="text-xs text-gray-500">{reply.time}</span>
+                                                </div>
+                                                <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
+                                                    <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                                                        {reply.content}
+                                                    </p>
+                                                </div>
+                                                <div className="flex mt-2 items-center gap-1.5">
+                                                    <Button variant="ghost" className="h-7 rounded-full px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 text-xs">
+                                                        <ThumbsUp className="h-3.5 w-3.5 mr-1" />
+                                                        Reply
+                                                    </Button>
+                                                    <Button variant="ghost" className="h-7 rounded-full px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 text-xs">
+                                                        <Smile className="h-3.5 w-3.5 mr-1" />
+                                                        React
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <Button
-                                onClick={handleSendMessage}
-                                disabled={!messageText.trim()}
-                                className="h-10 w-10 p-0 rounded-full flex items-center justify-center"
-                            >
-                                <SendHorizontal className="h-5 w-5" />
-                            </Button>
                         </div>
-                        <div className="flex items-center justify-between mt-2 max-w-3xl mx-auto">
-                            <div className="flex items-center gap-2">
-                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
-                                    <Smile className="h-5 w-5" />
-                                </button>
-                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
-                                    <PaperclipIcon className="h-5 w-5" />
-                                </button>
+
+                        {/* Input Area - Now only in Messages tab */}
+                        <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4 mt-auto">
+                            <div className="flex items-end gap-3 max-w-3xl mx-auto">
+                                <div className="flex-1 relative">
+                                    <Input
+                                        placeholder="Write your message..."
+                                        value={messageText}
+                                        onChange={(e) => setMessageText(e.target.value)}
+                                        className="min-h-[80px] py-3 pl-4 pr-10 text-sm resize-none overflow-auto"
+                                    />
+                                    <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                        <PaperclipIcon className="h-5 w-5" />
+                                    </button>
+                                </div>
+                                <Button
+                                    onClick={handleSendMessage}
+                                    disabled={!messageText.trim()}
+                                    className="h-10 w-10 p-0 rounded-full flex items-center justify-center"
+                                >
+                                    <SendHorizontal className="h-5 w-5" />
+                                </Button>
                             </div>
-                            <div className="text-xs text-gray-400">
-                                Use @ to mention colleagues
+                            <div className="flex items-center justify-between mt-2 max-w-3xl mx-auto">
+                                <div className="flex items-center gap-2">
+                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
+                                        <Smile className="h-5 w-5" />
+                                    </button>
+                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
+                                        <PaperclipIcon className="h-5 w-5" />
+                                    </button>
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                    Use @ to mention colleagues
+                                </div>
                             </div>
                         </div>
                     </div>
                 </TabsContent>
 
                 {/* Insights Tab Content */}
-                <TabsContent value="insights" className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-950">
+                <TabsContent value="insights" className="h-full overflow-auto bg-gray-50 dark:bg-gray-950">
                     <div className="max-w-3xl mx-auto py-6 px-4 pb-20">
                         <div className="grid sm:grid-cols-2 gap-6">
                             {/* Analysis Cards */}
@@ -455,6 +461,19 @@ export default function InboxPage() {
                     </div>
                 </TabsContent>
             </Tabs>
+
+            {/* Add CSS for fixing the tab display behavior */}
+            <style jsx global>{`
+                [data-tab-content="messages"] {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                [data-state="inactive"] [data-tab-content="messages"] {
+                    display: none;
+                }
+            `}</style>
         </div>
     )
 } 
