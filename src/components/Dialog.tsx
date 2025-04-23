@@ -1,7 +1,7 @@
 // Tremor Dialog [v1.0.0]
 
-import React from "react"
 import * as DialogPrimitives from "@radix-ui/react-dialog"
+import React from "react"
 
 import { cx, focusRing } from "@/lib/utils"
 
@@ -60,9 +60,9 @@ const DialogContent = React.forwardRef<
                         // base
                         "fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-md border p-6 shadow-lg",
                         // border color
-                        "border-gray-200 dark:border-gray-900",
+                        "border-gray-200 dark:border-gray-800",
                         // background color
-                        "bg-white dark:bg-[#090E1A]",
+                        "bg-white dark:bg-gray-950",
                         // transition
                         "data-[state=open]:animate-dialog-content-show",
                         focusRing,
@@ -146,5 +146,5 @@ export {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
+    DialogTrigger
 }

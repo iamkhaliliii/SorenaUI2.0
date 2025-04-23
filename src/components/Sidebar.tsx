@@ -139,8 +139,9 @@ const Sidebar = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
       return (
         <Drawer open={openMobile} onOpenChange={setOpenMobile} {...props}>
           <DrawerContent
-            className="bg-gray-50 p-0 text-gray-900 dark:bg-gray-925 dark:text-gray-50"
+            className="bg-gray-50 p-0 text-gray-900 dark:bg-gray-950 dark:text-gray-50"
             suppressHydrationWarning
+            tremor-id="tremor-raw"
           >
             <VisuallyHidden.Root>
               <DrawerTitle>Sidebar</DrawerTitle>
@@ -168,6 +169,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
         data-state={state}
         data-collapsible={state === "collapsed" ? true : false}
         suppressHydrationWarning
+        tremor-id="tremor-raw"
       >
         {/* This is what handles the sidebar gap on desktop */}
         <div

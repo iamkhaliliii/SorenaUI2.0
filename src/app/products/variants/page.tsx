@@ -203,10 +203,10 @@ export default function ProductsVariantsPage() {
                         <div className="p-6">
                             <div className="flex flex-wrap items-center justify-between gap-4">
                                 <div className="flex items-center space-x-3">
-                                    <span className="relative flex size-12 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white dark:border-gray-800 dark:bg-[#090E1A]">
+                                    <span className="relative flex size-12 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
                                         <item.icon className="size-5" aria-hidden={true} />
                                         {item.isHomeBuilt ? (
-                                            <span className="absolute -right-1 -top-1 flex size-4 shrink-0 items-center justify-center rounded-full bg-blue-500 ring-2 ring-white dark:bg-blue-500 dark:ring-[#090E1A]">
+                                            <span className="absolute -right-1 -top-1 flex size-4 shrink-0 items-center justify-center rounded-full bg-blue-500 ring-2 ring-white dark:bg-blue-500 dark:ring-gray-950">
                                                 <RiStarSFill
                                                     className="size-2.5 text-white dark:text-white"
                                                     aria-hidden={true}
@@ -247,7 +247,7 @@ export default function ProductsVariantsPage() {
                             </dd>
                         </div>
                         {item.status !== 'coming soon' ? (
-                            <div className="border-t border-gray-200 bg-gray-50 px-6 py-3 dark:border-gray-900 dark:bg-[#090E1A]">
+                            <div className="border-t border-gray-200 bg-gray-50 px-6 py-3 dark:border-gray-900 dark:bg-gray-950">
                                 <div className="flex items-center space-x-2">
                                     <RiArrowDownCircleLine
                                         className="size-5 text-gray-400 dark:text-gray-600"

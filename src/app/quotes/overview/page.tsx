@@ -110,7 +110,7 @@ export default function Overview() {
                             key={nameIndex}
                             className={cx(
                               getRandomColor(name.initials),
-                              "inline-flex size-5 items-center justify-center rounded-full text-xs font-medium text-white ring-2 ring-white dark:text-white dark:ring-[#090E1A]",
+                              "inline-flex size-5 items-center justify-center rounded-full text-xs font-medium text-white ring-2 ring-white dark:text-white dark:ring-gray-950",
                             )}
                           >
                             {name.initials}

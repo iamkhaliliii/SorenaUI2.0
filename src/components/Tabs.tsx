@@ -120,6 +120,7 @@ const TabsContent = React.forwardRef<
     <TabsPrimitives.Content
         ref={forwardedRef}
         className={cx("outline-hidden", focusRing, className)}
+        tremor-id="tremor-raw"
         {...props}
     />
 ))

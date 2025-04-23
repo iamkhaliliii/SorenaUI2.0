@@ -1,4 +1,5 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/Sidebar"
+import { DarkModeToggle } from "@/components/ui/DarkModeToggle"
 import { AppSidebar } from "@/components/ui/navigation/AppSidebar"
 import { Breadcrumbs } from "@/components/ui/navigation/Breadcrumbs"
 import type { Metadata } from "next"
@@ -59,7 +60,7 @@ export default async function RootLayout({
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
 
   return (
-    <html lang="en" className="h-full" suppressHydrationWarning>
+    <html lang="en" className="h-full dark:bg-gray-950" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-white-50 h-full antialiased dark:bg-gray-950`}
         suppressHydrationWarning
@@ -77,6 +78,9 @@ export default async function RootLayout({
                 <SidebarTrigger className="-ml-1" />
                 <div className="mr-2 h-4 w-px bg-gray-200 dark:bg-gray-800" />
                 <Breadcrumbs />
+                <div className="ml-auto">
+                  <DarkModeToggle />
+                </div>
               </header>
               <main suppressHydrationWarning>{children}</main>
             </div>

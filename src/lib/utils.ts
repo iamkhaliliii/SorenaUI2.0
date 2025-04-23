@@ -7,6 +7,11 @@ export function cx(...args: ClassValue[]) {
   return twMerge(clsx(...args))
 }
 
+// Consistent dark mode theming for both Tremor and custom components
+export function darkModeClass(lightClass: string, darkClass: string) {
+  return `${lightClass} dark:${darkClass}`
+}
+
 // Tremor Raw focusInput [v0.0.1]
 
 export const focusInput = [

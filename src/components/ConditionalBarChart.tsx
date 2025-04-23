@@ -120,7 +120,7 @@ const LegendItem = ({ name, color, onClick }: LegendItemProps) => {
       <span
         className={cx(
           getGradientColorClassName(color),
-          "h-1.5 w-14 rounded-full bg-gradient-to-r",
+          "h-1.5 w-14 rounded-full bg-gradient-to-r dark:opacity-80",
         )}
       />
       <span className="text-xs text-gray-700 dark:text-gray-300">High</span>
@@ -451,10 +451,10 @@ const ConditionalBarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
             onClick={
               hasOnValueChange && (activeLegend || activeBar)
                 ? () => {
-                    setActiveBar(undefined)
-                    setActiveLegend(undefined)
-                    onValueChange?.(null)
-                  }
+                  setActiveBar(undefined)
+                  setActiveLegend(undefined)
+                  onValueChange?.(null)
+                }
                 : undefined
             }
             margin={{
@@ -494,23 +494,23 @@ const ConditionalBarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
               minTickGap={tickGap}
               {...(layout !== "vertical"
                 ? {
-                    padding: {
-                      left: paddingValue,
-                      right: paddingValue,
-                    },
-                    dataKey: index,
-                    interval: startEndOnly ? "preserveStartEnd" : intervalType,
-                    ticks: startEndOnly
-                      ? [data[0][index], data[data.length - 1][index]]
-                      : undefined,
-                  }
+                  padding: {
+                    left: paddingValue,
+                    right: paddingValue,
+                  },
+                  dataKey: index,
+                  interval: startEndOnly ? "preserveStartEnd" : intervalType,
+                  ticks: startEndOnly
+                    ? [data[0][index], data[data.length - 1][index]]
+                    : undefined,
+                }
                 : {
-                    type: "number",
-                    domain: yAxisDomain as AxisDomain,
-                    tickFormatter:
-                      type === "percent" ? valueToPercent : valueFormatter,
-                    allowDecimals: allowDecimals,
-                  })}
+                  type: "number",
+                  domain: yAxisDomain as AxisDomain,
+                  tickFormatter:
+                    type === "percent" ? valueToPercent : valueFormatter,
+                  allowDecimals: allowDecimals,
+                })}
             >
               {xAxisLabel && (
                 <Label
@@ -543,20 +543,20 @@ const ConditionalBarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
               }}
               {...(layout !== "vertical"
                 ? {
-                    type: "number",
-                    domain: yAxisDomain as AxisDomain,
-                    tickFormatter:
-                      type === "percent" ? valueToPercent : valueFormatter,
-                    allowDecimals: allowDecimals,
-                  }
+                  type: "number",
+                  domain: yAxisDomain as AxisDomain,
+                  tickFormatter:
+                    type === "percent" ? valueToPercent : valueFormatter,
+                  allowDecimals: allowDecimals,
+                }
                 : {
-                    dataKey: index,
-                    ticks: startEndOnly
-                      ? [data[0][index], data[data.length - 1][index]]
-                      : undefined,
-                    type: "category",
-                    interval: "equidistantPreserveStart",
-                  })}
+                  dataKey: index,
+                  ticks: startEndOnly
+                    ? [data[0][index], data[data.length - 1][index]]
+                    : undefined,
+                  type: "category",
+                  interval: "equidistantPreserveStart",
+                })}
             >
               {yAxisLabel && (
                 <Label
@@ -583,15 +583,15 @@ const ConditionalBarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
               content={({ active, payload, label }) => {
                 const cleanPayload: TooltipProps["payload"] = payload
                   ? payload.map((item: any) => ({
-                      category: item.dataKey,
-                      value: item.value,
-                      index: item.payload[index],
-                      color: categoryColors.get(
-                        item.dataKey,
-                      ) as AvailableChartColorsKeys,
-                      type: item.type,
-                      payload: item.payload,
-                    }))
+                    category: item.dataKey,
+                    value: item.value,
+                    index: item.payload[index],
+                    color: categoryColors.get(
+                      item.dataKey,
+                    ) as AvailableChartColorsKeys,
+                    type: item.type,
+                    payload: item.payload,
+                  }))
                   : []
 
                 if (
@@ -634,7 +634,7 @@ const ConditionalBarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                     activeLegend,
                     hasOnValueChange
                       ? (clickedLegendItem: string) =>
-                          onCategoryClick(clickedLegendItem)
+                        onCategoryClick(clickedLegendItem)
                       : undefined,
                     legendPosition,
                     yAxisWidth,

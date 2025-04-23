@@ -24,7 +24,7 @@ export default function Layout({
 
     return (
         <div className="w-full h-full">
-            <div className="bg-white dark:bg-gray-925 min-h-[calc(100vh-4rem)]">
+            <div className="bg-white dark:bg-gray-950 min-h-[calc(100vh-4rem)]">
                 <div className="p-4 sm:p-6">
                     <MetricsCards />
                 </div>

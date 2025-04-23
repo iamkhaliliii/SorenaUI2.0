@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isConnectionsActive = activeRoute.startsWith("/connections")
 
   return (
-    <Sidebar {...props} className="bg-gray-50 dark:bg-gray-925" suppressHydrationWarning>
+    <Sidebar {...props} className="bg-gray-50 dark:bg-gray-950" suppressHydrationWarning tremor-id="tremor-raw">
       <SidebarHeader className="py-4 px-8" suppressHydrationWarning>
         <div className="flex items-center gap-2" suppressHydrationWarning>
           <span className="flex size-8 items-center justify-center rounded-md bg-black p-1.5">

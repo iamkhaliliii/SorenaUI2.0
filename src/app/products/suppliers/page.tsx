@@ -640,7 +640,7 @@ const FilterScroll = React.forwardRef(
                 </div>
 
                 <div
-                    className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-white"
+                    className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-white dark:from-gray-950"
                     style={{ opacity: 1 - Math.pow(scrollProgress, 2) }}
                 />
             </>
@@ -681,13 +681,13 @@ export default function Example() {
                 <Card className="mt-8 overflow-hidden p-0">
                     <TabsList
                         defaultValue="tab1"
-                        className="h-24 bg-gray-50 dark:!bg-[#090E1A]"
+                        className="h-24 bg-gray-50 dark:!bg-gray-950"
                     >
                         {summary.map((tab) => (
                             <React.Fragment key={tab.name}>
                                 <TabsTrigger
                                     value={tab.name}
-                                    className="py-4 pl-5 pr-12 text-left data-[state=active]:bg-white dark:data-[state=active]:bg-[#090E1A]"
+                                    className="py-4 pl-5 pr-12 text-left data-[state=active]:bg-white dark:data-[state=active]:bg-gray-950"
                                 >
                                     <span className="block font-normal text-gray-500 dark:text-gray-500">
                                         {tab.name}
@@ -753,7 +753,7 @@ export default function Example() {
                                 valueFormatter={valueFormatter}
                                 className="mt-4"
                             />
-                            <div className="absolute inset-x-0 bottom-0 flex justify-center rounded-b-lg bg-gradient-to-t from-white to-transparent py-7 dark:from-gray-950">
+                            <div className="absolute inset-x-0 bottom-0 flex justify-center rounded-b-lg bg-gradient-to-t from-white to-transparent py-7 dark:from-gray-950 dark:to-transparent">
                                 <Button
                                     variant="secondary"
                                     className="gap-1.5 rounded-full px-2.5 py-1.5 text-xs"
@@ -813,7 +813,7 @@ export default function Example() {
                             )}
                         </FilterScroll>
                     </div>
-                    <DialogFooter className="border-t border-gray-200 bg-gray-50 px-6 py-6 dark:border-gray-900 dark:bg-[#090E1A]">
+                    <DialogFooter className="border-t border-gray-200 bg-gray-50 px-6 py-6 dark:border-gray-900 dark:bg-gray-950">
                         <DialogClose asChild>
                             <Button
                                 onClick={() => setSearchQuery('')}

@@ -81,7 +81,7 @@ const DrawerContent = React.forwardRef<
             // border color
             "border-gray-200 dark:border-gray-900",
             // background color
-            "bg-white dark:bg-[#090E1A]",
+            "bg-white dark:bg-gray-950",
             // transition
             "data-[state=closed]:animate-drawerSlideRightAndFade data-[state=open]:animate-drawerSlideLeftAndFade",
             focusRing,
@@ -191,5 +191,6 @@ export {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
+  DrawerTrigger
 }
+

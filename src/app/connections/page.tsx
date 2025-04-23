@@ -1,74 +1,540 @@
-"use client"
-import { Link2 } from "lucide-react";
+'use client';
 
-export default function ConnectionsPage() {
-    return (
-        <div className="p-6">
-            <div className="mb-6 flex items-center">
-                <Link2 className="mr-2 size-5 text-blue-500" />
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Connections</h1>
-            </div>
+import { Divider } from "@/components/Divider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
+import { RiAddFill, RiArrowDownCircleLine, RiStarSFill } from '@remixicon/react';
+import { Card } from '@tremor/react';
+import { Blocks, Link2 } from "lucide-react";
 
-            <section className="mb-8">
-                <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                        Manage Integrations
-                    </h2>
-                    <p className="mt-2 text-gray-600 dark:text-gray-400">
-                        Connect your applications and services to enhance functionality and automate workflows.
-                    </p>
-                </div>
-            </section>
-
-            <section className="mb-8">
-                <h2 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">Active Connections</h2>
-                <div className="space-y-4">
-                    <ConnectionCard
-                        name="GitHub"
-                        status="Connected"
-                        lastSync="2 hours ago"
-                    />
-                    <ConnectionCard
-                        name="Slack"
-                        status="Connected"
-                        lastSync="1 day ago"
-                    />
-                    <ConnectionCard
-                        name="Google Drive"
-                        status="Not connected"
-                        lastSync="Never"
-                    />
-                </div>
-            </section>
-        </div>
-    )
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(' ');
 }
 
-function ConnectionCard({
-    name,
-    status,
-    lastSync
-}: {
-    name: string;
-    status: "Connected" | "Not connected";
-    lastSync: string;
-}) {
-    const isConnected = status === "Connected";
+const GoogleDriveIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 88 78" {...props}>
+        <g clipPath="url(#clip0_6661_2945)">
+            <path
+                fill="#0066DA"
+                d="M6.6 66.85L10.45 73.5C11.25 74.9 12.4 76 13.75 76.8L27.5 53H0C0 54.55 0.4 56.1 1.2 57.5L6.6 66.85Z"
+            />
+            <path
+                fill="#00AC47"
+                d="M43.65 25.0002L29.9 1.2002C28.55 2.0002 27.4 3.1002 26.6 4.5002L1.2 48.5002C0.414713 49.87 0.00104556 51.4213 0 53.0002H27.5L43.65 25.0002Z"
+            />
+            <path
+                fill="#EA4335"
+                d="M73.55 76.8C74.9 76 76.05 74.9 76.85 73.5L78.45 70.75L86.1 57.5C86.9 56.1 87.3 54.55 87.3 53H59.798L65.65 64.5L73.55 76.8Z"
+            />
+            <path
+                fill="#00832D"
+                d="M43.65 25L57.4 1.2C56.05 0.4 54.5 0 52.9 0H34.4C32.8 0 31.25 0.45 29.9 1.2L43.65 25Z"
+            />
+            <path
+                fill="#2684FC"
+                d="M59.8 53H27.5L13.75 76.8C15.1 77.6 16.65 78 18.25 78H69.05C70.65 78 72.2 77.55 73.55 76.8L59.8 53Z"
+            />
+            <path
+                fill="#FFBA00"
+                d="M73.4 26.5002L60.7 4.5002C59.9 3.1002 58.75 2.0002 57.4 1.2002L43.65 25.0002L59.8 53.0002H87.25C87.25 51.4502 86.85 49.9002 86.05 48.5002L73.4 26.5002Z"
+            />
+        </g>
+        <defs>
+            <clipPath id="clip0_6661_2945">
+                <rect width={87.3} height={78} fill="white" />
+            </clipPath>
+        </defs>
+    </svg>
+);
 
+const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 500 500" {...props}>
+        <path
+            fill="#0866FF"
+            d="M500 250C500 111.93 388.07 0 250 0C111.93 0 0 111.93 0 250C0 367.24 80.72 465.62 189.61 492.64V326.4H138.06V250H189.61V217.08C189.61 131.99 228.12 92.55 311.66 92.55C327.5 92.55 354.83 95.66 366.01 98.76V168.01C360.11 167.39 349.86 167.08 337.13 167.08C296.14 167.08 280.3 182.61 280.3 222.98V250H361.96L347.93 326.4H280.3V498.17C404.07 483.22 500 377.82 500 250Z"
+        />
+    </svg>
+);
+
+const NotionIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 100 100" {...props}>
+        <g clipPath="url(#clip0_6661_2956)">
+            <path
+                fill="white"
+                d="M6.017 4.31322L61.35 0.226216C68.147 -0.356784 69.893 0.036216 74.167 3.14322L91.83 15.5862C94.743 17.7262 95.713 18.3092 95.713 20.6392V88.8822C95.713 93.1592 94.16 95.6892 88.723 96.0752L24.467 99.9672C20.387 100.16 18.444 99.5772 16.307 96.8542L3.3 79.9402C0.967 76.8272 0 74.4972 0 71.7732V11.1132C0 7.61622 1.553 4.70022 6.017 4.31322Z"
+            />
+            <path
+                fill="black"
+                fillRule="evenodd"
+                d="M61.35 0.227216L6.017 4.31422C1.553 4.70022 0 7.61722 0 11.1132V71.7732C0 74.4962 0.967 76.8262 3.3 79.9402L16.307 96.8532C18.444 99.5762 20.387 100.16 24.467 99.9662L88.724 96.0762C94.157 95.6892 95.714 93.1592 95.714 88.8832V20.6402C95.714 18.4302 94.841 17.7932 92.271 15.9072L74.167 3.14322C69.894 0.036216 68.147 -0.356784 61.35 0.226216V0.227216ZM25.92 19.5232C20.673 19.8762 19.483 19.9562 16.503 17.5332L8.927 11.5072C8.157 10.7272 8.544 9.75422 10.484 9.56022L63.677 5.67322C68.144 5.28322 70.47 6.84022 72.217 8.20022L81.34 14.8102C81.73 15.0072 82.7 16.1702 81.533 16.1702L26.6 19.4772L25.92 19.5232ZM19.803 88.3002V30.3672C19.803 27.8372 20.58 26.6702 22.906 26.4742L86 22.7802C88.14 22.5872 89.107 23.9472 89.107 26.4732V84.0202C89.107 86.5502 88.717 88.6902 85.224 88.8832L24.847 92.3832C21.354 92.5762 19.804 91.4132 19.804 88.3002H19.803ZM79.403 33.4732C79.79 35.2232 79.403 36.9732 77.653 37.1732L74.743 37.7502V80.5232C72.216 81.8832 69.89 82.6602 67.946 82.6602C64.839 82.6602 64.063 81.6872 61.736 78.7732L42.706 48.8332V77.8002L48.726 79.1632C48.726 79.1632 48.726 82.6632 43.869 82.6632L30.479 83.4402C30.089 82.6602 30.479 80.7172 31.836 80.3302L35.333 79.3602V41.0602L30.48 40.6672C30.09 38.9172 31.06 36.3902 33.78 36.1942L48.147 35.2272L67.947 65.5542V38.7242L62.9 38.1442C62.51 36.0012 64.063 34.4442 66.003 34.2542L79.403 33.4732Z"
+                clipRule="evenodd"
+            />
+        </g>
+        <defs>
+            <clipPath id="clip0_6661_2956">
+                <rect width={100} height={100} fill="white" />
+            </clipPath>
+        </defs>
+    </svg>
+);
+
+const SlackIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 123 123" {...props}>
+        <path
+            fill="#E01E5A"
+            d="M25.8 77.6002C25.8 84.7002 20 90.5002 12.9 90.5002C5.8 90.5002 0 84.7002 0 77.6002C0 70.5002 5.8 64.7002 12.9 64.7002H25.8V77.6002Z"
+        />
+        <path
+            fill="#E01E5A"
+            d="M32.3 77.6002C32.3 70.5002 38.1 64.7002 45.2 64.7002C52.3 64.7002 58.1 70.5002 58.1 77.6002V109.9C58.1 117 52.3 122.8 45.2 122.8C38.1 122.8 32.3 117 32.3 109.9V77.6002Z"
+        />
+        <path
+            fill="#36C5F0"
+            d="M45.2 25.8C38.1 25.8 32.3 20 32.3 12.9C32.3 5.8 38.1 0 45.2 0C52.3 0 58.1 5.8 58.1 12.9V25.8H45.2Z"
+        />
+        <path
+            fill="#36C5F0"
+            d="M45.2 32.2998C52.3 32.2998 58.1 38.0998 58.1 45.1998C58.1 52.2998 52.3 58.0998 45.2 58.0998H12.9C5.8 58.0998 0 52.2998 0 45.1998C0 38.0998 5.8 32.2998 12.9 32.2998H45.2Z"
+        />
+        <path
+            fill="#2EB67D"
+            d="M97 45.1998C97 38.0998 102.8 32.2998 109.9 32.2998C117 32.2998 122.8 38.0998 122.8 45.1998C122.8 52.2998 117 58.0998 109.9 58.0998H97V45.1998Z"
+        />
+        <path
+            fill="#2EB67D"
+            d="M90.5 45.2C90.5 52.3 84.7 58.1 77.6 58.1C70.5 58.1 64.7 52.3 64.7 45.2V12.9C64.7 5.8 70.5 0 77.6 0C84.7 0 90.5 5.8 90.5 12.9V45.2Z"
+        />
+        <path
+            fill="#ECB22E"
+            d="M77.6 97C84.7 97 90.5 102.8 90.5 109.9C90.5 117 84.7 122.8 77.6 122.8C70.5 122.8 64.7 117 64.7 109.9V97H77.6Z"
+        />
+        <path
+            fill="#ECB22E"
+            d="M77.6 90.5002C70.5 90.5002 64.7 84.7002 64.7 77.6002C64.7 70.5002 70.5 64.7002 77.6 64.7002H109.9C117 64.7002 122.8 70.5002 122.8 77.6002C122.8 84.7002 117 90.5002 109.9 90.5002H77.6Z"
+        />
+    </svg>
+);
+
+const DropboxIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 165 140" {...props}>
+        <g clipPath="url(#clip0_6661_2986)">
+            <path
+                fill="#0061FF"
+                d="M82.2562 26.2152L41.1334 52.4303L82.2562 78.6455L41.1334 104.861L0 78.4976L41.1334 52.2825L0 26.2152L41.1334 0L82.2562 26.2152ZM40.9117 113.286L82.0451 87.0706L123.168 113.286L82.0451 139.501L40.9117 113.286ZM82.2457 78.4976L123.379 52.2825L82.2457 26.2152L123.168 0L164.301 26.2152L123.168 52.4303L164.301 78.6455L123.168 104.861L82.2457 78.4976Z"
+            />
+        </g>
+        <defs>
+            <clipPath id="clip0_6661_2986">
+                <rect width={164.386} height={139.575} fill="white" />
+            </clipPath>
+        </defs>
+    </svg>
+);
+
+const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 24 24" {...props}>
+        <path
+            fill="currentColor"
+            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+        />
+    </svg>
+);
+
+const G2Icon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 24 24" {...props}>
+        <path
+            fill="currentColor"
+            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM15 12C15 13.66 13.66 15 12 15C10.34 15 9 13.66 9 12C9 10.34 10.34 9 12 9C13.66 9 15 10.34 15 12Z"
+        />
+    </svg>
+);
+
+const BettermodeIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 24 24" {...props}>
+        <path
+            fill="currentColor"
+            d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"
+        />
+    </svg>
+);
+
+const IntercomIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg fill="none" viewBox="0 0 24 24" {...props}>
+        <path
+            fill="currentColor"
+            d="M4.85 2.77a49.18 49.18 0 0117.4 0c1.98.29 3.4 2.02 3.4 3.97v10.52c0 1.95-1.42 3.68-3.4 3.97a48.9 48.9 0 01-17.4 0c-1.98-.29-3.4-2.02-3.4-3.97V6.74c0-1.95 1.42-3.68 3.4-3.97zm3.15 5.85a1.35 1.35 0 00-2.7 0v6.18c0 .74.6 1.35 1.35 1.35s1.35-.6 1.35-1.35V8.62zm5 1.5a1.35 1.35 0 00-2.7 0v4.68c0 .74.6 1.35 1.35 1.35s1.35-.6 1.35-1.35v-4.68zm5-1.5a1.35 1.35 0 00-2.7 0v6.18c0 .74.6 1.35 1.35 1.35s1.35-.6 1.35-1.35V8.62z"
+        />
+    </svg>
+);
+
+const data = [
+    {
+        name: 'Google Drive',
+        description: 'Automate your file upload workflow',
+        installations: 983,
+        icon: GoogleDriveIcon,
+        href: '#',
+        isHomeBuilt: true,
+        status: 'live',
+    },
+    {
+        name: 'Facebook Ads',
+        description: 'Analayze ad performance directly in your workspace',
+        installations: 461,
+        icon: FacebookIcon,
+        href: '#',
+        isHomeBuilt: false,
+        status: 'live',
+    },
+    {
+        name: 'Notion',
+        description: 'Create, manage and sync documentation',
+        installations: 719,
+        icon: NotionIcon,
+        href: '#',
+        isHomeBuilt: true,
+        status: 'live',
+    },
+    {
+        name: 'Slack',
+        description: 'Sent alerts and workspace updates to your slack account',
+        installations: 889,
+        icon: SlackIcon,
+        href: '#',
+        isHomeBuilt: false,
+        status: 'live',
+    },
+    {
+        name: 'Dropbox',
+        description: 'Automate your file upload workflow',
+        installations: 199,
+        icon: DropboxIcon,
+        href: '#',
+        isHomeBuilt: false,
+        status: 'coming soon',
+    },
+];
+
+export default function Example() {
     return (
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h3 className="text-base font-medium text-gray-900 dark:text-white">{name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Last sync: {lastSync}</p>
+        <div className="p-6">
+            <Tabs defaultValue="my-connections">
+                <TabsList variant="line">
+                    <TabsTrigger value="my-connections" className="inline-flex gap-2">
+                        <Link2 className="-ml-1 size-4" aria-hidden="true" />
+                        My connections
+                    </TabsTrigger>
+                    <TabsTrigger value="more-connections" className="inline-flex gap-2">
+                        <Blocks className="-ml-1 size-4" aria-hidden="true" />
+                        Discover more connections
+                    </TabsTrigger>
+                    <TabsTrigger value="empty-state" className="inline-flex gap-2">
+                        <span className="inline-flex gap-2 italic text-mute">[
+                            <Link2 className="-ml-1 size-4" aria-hidden="true" />
+                            Empty state ]
+                        </span>
+
+                    </TabsTrigger>
+                </TabsList>
+                <div className="mt-4">
+                    <TabsContent value="my-connections">
+                        <div className="mb-8 overflow-hidden rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border">
+                            <table className="w-full divide-y divide-tremor-border dark:divide-dark-tremor-border">
+                                <thead>
+                                    <tr>
+                                        <th className="px-6 py-4 text-left text-tremor-default font-medium text-tremor-content dark:text-dark-tremor-content">Connection</th>
+                                        <th className="px-6 py-4 text-right text-tremor-default font-medium text-tremor-content dark:text-dark-tremor-content">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-tremor-border dark:divide-dark-tremor-border">
+                                    <tr>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-4">
+                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
+                                                    <BettermodeIcon className="size-5 text-green-500" aria-hidden={true} />
+                                                </span>
+                                                <div>
+                                                    <div className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Bettermode</div>
+                                                    <div className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Manage posts, engagement, and automate replies.</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                            <div className="flex items-center justify-end gap-4">
+                                                <div className="flex items-center gap-1 text-green-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+                                                        <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.035-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
+                                                    </svg>
+                                                    <span className="text-tremor-default font-medium">Connected</span>
+                                                </div>
+                                                <button type="button" className="p-1 text-tremor-content hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:text-dark-tremor-content-strong">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+                                                        <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-4">
+                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
+                                                    <TwitterIcon className="size-5" aria-hidden={true} />
+                                                </span>
+                                                <div>
+                                                    <div className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">X (Twitter)</div>
+                                                    <div className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Monitor mentions and schedule posts.</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                            <div className="flex items-center justify-end gap-4">
+                                                <div className="flex items-center gap-1 text-green-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+                                                        <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.035-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
+                                                    </svg>
+                                                    <span className="text-tremor-default font-medium">Connected</span>
+                                                </div>
+                                                <button type="button" className="p-1 text-tremor-content hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:text-dark-tremor-content-strong">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+                                                        <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-4">
+                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
+                                                    <G2Icon className="size-5 text-blue-600" aria-hidden={true} />
+                                                </span>
+                                                <div>
+                                                    <div className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">G2</div>
+                                                    <div className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Collect and display customer reviews.</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                            <div className="flex items-center justify-end gap-4">
+                                                <div className="flex items-center gap-1 text-amber-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+                                                        <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" />
+                                                    </svg>
+                                                    <span className="text-tremor-default font-medium">Pending</span>
+                                                </div>
+                                                <button type="button" className="p-1 text-tremor-content hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:text-dark-tremor-content-strong">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+                                                        <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-4">
+                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
+                                                    <IntercomIcon className="size-5 text-blue-400" aria-hidden={true} />
+                                                </span>
+                                                <div>
+                                                    <div className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Intercom</div>
+                                                    <div className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Customer messaging and support platform.</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                            <div className="flex items-center justify-end gap-4">
+                                                <div className="flex items-center gap-1 text-red-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+                                                        <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clipRule="evenodd" />
+                                                    </svg>
+                                                    <span className="text-tremor-default font-medium">Disconnected</span>
+                                                </div>
+                                                <button type="button" className="p-1 text-tremor-content hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:text-dark-tremor-content-strong">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
+                                                        <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <Divider />
+
+                        <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {data.map((item) => (
+                                <Card
+                                    key={item.name}
+                                    className="flex flex-col justify-between overflow-hidden p-0"
+                                >
+                                    <div className="p-6">
+                                        <div className="flex flex-wrap items-center justify-between gap-4">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
+                                                    <item.icon className="size-5" aria-hidden={true} />
+                                                    {item.isHomeBuilt ? (
+                                                        <span className="absolute -right-1 -top-1 flex size-4 shrink-0 items-center justify-center rounded-tremor-full bg-tremor-brand ring-2 ring-tremor-brand-inverted dark:bg-dark-tremor-brand dark:ring-dark-tremor-background">
+                                                            <RiStarSFill
+                                                                className="size-2.5 text-tremor-brand-inverted dark:text-tremor-brand-inverted"
+                                                                aria-hidden={true}
+                                                            />
+                                                        </span>
+                                                    ) : null}
+                                                </span>
+                                                <dt
+                                                    className={classNames(
+                                                        item.status === 'coming soon'
+                                                            ? 'text-tremor-content-subtle dark:text-dark-tremor-content-subtle'
+                                                            : 'text-tremor-content-strong dark:text-dark-tremor-content-strong',
+                                                        'text-tremor-default font-medium',
+                                                    )}
+                                                >
+                                                    <a href={item.href} className="focus:outline-none">
+                                                        {/* Extend link to entire card */}
+                                                        <span className="absolute inset-0" aria-hidden={true} />
+                                                        {item.name}
+                                                    </a>
+                                                </dt>
+                                            </div>
+                                            {item.status === 'coming soon' ? (
+                                                <span className="inline-flex items-center rounded-tremor-small bg-tremor-background-muted px-2 py-0.5 text-tremor-label font-medium text-tremor-content ring-1 ring-inset ring-tremor-ring dark:bg-dark-tremor-background-muted dark:text-dark-tremor-content dark:ring-dark-tremor-ring">
+                                                    {item.status}
+                                                </span>
+                                            ) : null}
+                                        </div>
+
+                                        <dd
+                                            className={classNames(
+                                                item.status === 'coming soon'
+                                                    ? 'text-tremor-content-subtle dark:text-dark-tremor-content-subtle'
+                                                    : 'text-tremor-content dark:text-dark-tremor-content',
+                                                'mt-3 text-tremor-default leading-6',
+                                            )}
+                                        >
+                                            {item.description}
+                                        </dd>
+                                    </div>
+                                    {item.status !== 'coming soon' ? (
+                                        <div className="border-t border-tremor-border bg-tremor-background-muted px-6 py-3 dark:border-dark-tremor-border dark:bg-dark-tremor-background-muted">
+                                            <div className="flex items-center space-x-2">
+                                                <RiArrowDownCircleLine
+                                                    className="size-5 text-tremor-content-subtle dark:text-dark-tremor-content-subtle"
+                                                    aria-hidden={true}
+                                                />
+                                                <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                                                    {item.installations} Installations
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                </Card>
+                            ))}
+                        </dl>
+                    </TabsContent>
+                    <TabsContent value="more-connections">
+                        <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {data.map((item) => (
+                                <Card
+                                    key={item.name}
+                                    className="flex flex-col justify-between overflow-hidden p-0"
+                                >
+                                    <div className="p-6">
+                                        <div className="flex flex-wrap items-center justify-between gap-4">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
+                                                    <item.icon className="size-5" aria-hidden={true} />
+                                                    {item.isHomeBuilt ? (
+                                                        <span className="absolute -right-1 -top-1 flex size-4 shrink-0 items-center justify-center rounded-tremor-full bg-tremor-brand ring-2 ring-tremor-brand-inverted dark:bg-dark-tremor-brand dark:ring-dark-tremor-background">
+                                                            <RiStarSFill
+                                                                className="size-2.5 text-tremor-brand-inverted dark:text-tremor-brand-inverted"
+                                                                aria-hidden={true}
+                                                            />
+                                                        </span>
+                                                    ) : null}
+                                                </span>
+                                                <dt
+                                                    className={classNames(
+                                                        item.status === 'coming soon'
+                                                            ? 'text-tremor-content-subtle dark:text-dark-tremor-content-subtle'
+                                                            : 'text-tremor-content-strong dark:text-dark-tremor-content-strong',
+                                                        'text-tremor-default font-medium',
+                                                    )}
+                                                >
+                                                    <a href={item.href} className="focus:outline-none">
+                                                        {/* Extend link to entire card */}
+                                                        <span className="absolute inset-0" aria-hidden={true} />
+                                                        {item.name}
+                                                    </a>
+                                                </dt>
+                                            </div>
+                                            {item.status === 'coming soon' ? (
+                                                <span className="inline-flex items-center rounded-tremor-small bg-tremor-background-muted px-2 py-0.5 text-tremor-label font-medium text-tremor-content ring-1 ring-inset ring-tremor-ring dark:bg-dark-tremor-background-muted dark:text-dark-tremor-content dark:ring-dark-tremor-ring">
+                                                    {item.status}
+                                                </span>
+                                            ) : null}
+                                        </div>
+                                        <dd
+                                            className={classNames(
+                                                item.status === 'coming soon'
+                                                    ? 'text-tremor-content-subtle dark:text-dark-tremor-content-subtle'
+                                                    : 'text-tremor-content dark:text-dark-tremor-content',
+                                                'mt-3 text-tremor-default leading-6',
+                                            )}
+                                        >
+                                            {item.description}
+                                        </dd>
+                                    </div>
+                                    {item.status !== 'coming soon' ? (
+                                        <div className="border-t border-tremor-border bg-tremor-background-muted px-6 py-3 dark:border-dark-tremor-border dark:bg-dark-tremor-background-muted">
+                                            <div className="flex items-center space-x-2">
+                                                <RiArrowDownCircleLine
+                                                    className="size-5 text-tremor-content-subtle dark:text-dark-tremor-content-subtle"
+                                                    aria-hidden={true}
+                                                />
+                                                <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                                                    {item.installations} Installations
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                </Card>
+                            ))}
+                        </dl>
+                    </TabsContent>
+                    <TabsContent value="empty-state">
+                        <div className="relative mb-12 border border-tremor-border rounded-tremor-default dark:border-dark-tremor-border">
+                            <ul
+                                role="list"
+                                className=" p-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                            >
+                                <li className="h-44 rounded-tremor-default bg-tremor-background-subtle dark:bg-dark-tremor-background-subtle" />
+                                <li className="h-44 rounded-tremor-default bg-tremor-background-subtle dark:bg-dark-tremor-background-subtle" />
+                                <li className="hidden h-44 rounded-tremor-default bg-tremor-background-subtle dark:bg-dark-tremor-background-subtle sm:block" />
+                                <li className="hidden h-44 rounded-tremor-default bg-tremor-background-subtle dark:bg-dark-tremor-background-subtle sm:block" />
+                                <li className="hidden h-44 rounded-tremor-default bg-tremor-background-subtle dark:bg-dark-tremor-background-subtle sm:block" />
+                                <li className="hidden h-44 rounded-tremor-default bg-tremor-background-subtle dark:bg-dark-tremor-background-subtle sm:block" />
+                            </ul>
+                            <div className="absolute inset-0 flex h-full flex-col items-center justify-center bg-gradient-to-t from-white to-transparent dark:from-gray-950 dark:to-transparent">
+                                <p className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                                    No reports created yet
+                                </p>
+                                <p className="mt-2 text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                                    Create your first report to get started
+                                </p>
+                                <button
+                                    type="button"
+                                    className="mt-6 inline-flex items-center gap-1.5 whitespace-nowrap rounded-tremor-small bg-tremor-brand px-3 py-2 text-tremor-default font-medium text-tremor-brand-inverted shadow-tremor-dropdown hover:bg-tremor-brand-emphasis dark:bg-dark-tremor-brand dark:text-dark-tremor-brand-inverted dark:shadow-dark-tremor-dropdown dark:hover:bg-dark-tremor-brand-emphasis"
+                                >
+                                    <RiAddFill className="-ml-1 size-5 shrink-0" aria-hidden={true} />
+                                    Connect database
+                                </button>
+                            </div>
+                        </div>
+                    </TabsContent>
                 </div>
-                <div className="flex items-center">
-                    <span className={`mr-2 inline-block h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-                    <span className={`text-sm ${isConnected ? 'text-green-600 dark:text-green-500' : 'text-gray-500 dark:text-gray-400'}`}>
-                        {status}
-                    </span>
-                </div>
-            </div>
+            </Tabs>
         </div>
     );
-} 
+}

@@ -23,7 +23,7 @@ export default function Layout({
 
   return (
     <>
-      <div className="bg-white dark:bg-gray-925">
+      <div className="bg-white dark:bg-gray-950">
         <div className="p-4 sm:p-6">
           <MetricsCards />
         </div>
