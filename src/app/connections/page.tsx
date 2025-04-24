@@ -1,10 +1,11 @@
 'use client';
 
+import { Badge } from '@/components/Badge';
 import { Divider } from "@/components/Divider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 import { RiAddFill, RiArrowDownCircleLine, RiStarSFill } from '@remixicon/react';
-import { Card } from '@tremor/react';
-import { Blocks, Link2 } from "lucide-react";
+import { Card, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@tremor/react';
+import { Blocks, Link2, Settings } from "lucide-react";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
@@ -218,7 +219,7 @@ export default function Example() {
     return (
         <div className="p-6">
             <Tabs defaultValue="my-connections">
-                <TabsList variant="line">
+                <TabsList variant="solid">
                     <TabsTrigger value="my-connections" className="inline-flex gap-2">
                         <Link2 className="-ml-1 size-4" aria-hidden="true" />
                         My connections
@@ -235,134 +236,113 @@ export default function Example() {
 
                     </TabsTrigger>
                 </TabsList>
-                <div className="mt-4">
+                <div className="mt-8">
                     <TabsContent value="my-connections">
-                        <div className="mb-8 overflow-hidden rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border">
-                            <table className="w-full divide-y divide-tremor-border dark:divide-dark-tremor-border">
-                                <thead>
-                                    <tr>
-                                        <th className="px-6 py-4 text-left text-tremor-default font-medium text-tremor-content dark:text-dark-tremor-content">Connection</th>
-                                        <th className="px-6 py-4 text-right text-tremor-default font-medium text-tremor-content dark:text-dark-tremor-content">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-tremor-border dark:divide-dark-tremor-border">
-                                    <tr>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-4">
-                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
-                                                    <BettermodeIcon className="size-5 text-green-500" aria-hidden={true} />
-                                                </span>
-                                                <div>
-                                                    <div className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Bettermode</div>
-                                                    <div className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Manage posts, engagement, and automate replies.</div>
+                        <h3 className="text-tremor-title font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong mb-4">My connections</h3>
+
+                        <div className="mb-8">
+                            <div className="overflow-hidden rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border">
+                                <Table className="mt-0">
+                                    <TableHead className="bg-tremor-background-subtle dark:bg-dark-tremor-background-subtle">
+                                        <TableRow>
+                                            <TableHeaderCell className="py-3 pl-6 font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Connection</TableHeaderCell>
+                                            <TableHeaderCell className="py-3 font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">What's being synced</TableHeaderCell>
+                                            <TableHeaderCell className="py-3 font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Status</TableHeaderCell>
+                                            <TableHeaderCell className="w-10"></TableHeaderCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow className="border-b border-tremor-border dark:border-dark-tremor-border transition-colors hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted">
+                                            <TableCell className="pl-6">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 shadow-sm">
+                                                        <BettermodeIcon className="size-5 text-green-500" aria-hidden={true} />
+                                                    </span>
+                                                    <div className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Bettermode</div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="flex items-center justify-end gap-4">
-                                                <div className="flex items-center gap-1 text-green-500">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-                                                        <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.035-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
-                                                    </svg>
-                                                    <span className="text-tremor-default font-medium">Connected</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    <Badge variant="neutral">Intros & Networking</Badge>
+                                                    <Badge variant="neutral">Announcements</Badge>
+                                                    <Badge variant="neutral">Community Events</Badge>
+                                                    <Badge variant="neutral">+2 more</Badge>
                                                 </div>
-                                                <button type="button" className="p-1 text-tremor-content hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:text-dark-tremor-content-strong">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-                                                        <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
-                                                    </svg>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="success">
+                                                    Enabled
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <button type="button" className="p-1.5 rounded-full text-tremor-content hover:bg-tremor-background-subtle hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:bg-dark-tremor-background-subtle dark:hover:text-dark-tremor-content-strong transition-all">
+                                                    <Settings className="size-4" />
                                                 </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-4">
-                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
-                                                    <TwitterIcon className="size-5" aria-hidden={true} />
-                                                </span>
-                                                <div>
-                                                    <div className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">X (Twitter)</div>
-                                                    <div className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Monitor mentions and schedule posts.</div>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow className="border-b border-tremor-border dark:border-dark-tremor-border transition-colors hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted">
+                                            <TableCell className="pl-6">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 shadow-sm">
+                                                        <SlackIcon className="size-5" aria-hidden={true} />
+                                                    </span>
+                                                    <div className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Slack</div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="flex items-center justify-end gap-4">
-                                                <div className="flex items-center gap-1 text-green-500">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-                                                        <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.035-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
-                                                    </svg>
-                                                    <span className="text-tremor-default font-medium">Connected</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    <Badge variant="neutral">#general</Badge>
+                                                    <Badge variant="neutral">#support</Badge>
+                                                    <Badge variant="neutral">#dev</Badge>
+                                                    <Badge variant="neutral">+2 more</Badge>
                                                 </div>
-                                                <button type="button" className="p-1 text-tremor-content hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:text-dark-tremor-content-strong">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-                                                        <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
-                                                    </svg>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="success">
+                                                    Enabled
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <button type="button" className="p-1.5 rounded-full text-tremor-content hover:bg-tremor-background-subtle hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:bg-dark-tremor-background-subtle dark:hover:text-dark-tremor-content-strong transition-all">
+                                                    <Settings className="size-4" />
                                                 </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-4">
-                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
-                                                    <G2Icon className="size-5 text-blue-600" aria-hidden={true} />
-                                                </span>
-                                                <div>
-                                                    <div className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">G2</div>
-                                                    <div className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Collect and display customer reviews.</div>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow className="border-b border-tremor-border dark:border-dark-tremor-border transition-colors hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted">
+                                            <TableCell className="pl-6">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 shadow-sm">
+                                                        <NotionIcon className="size-5" aria-hidden={true} />
+                                                    </span>
+                                                    <div className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Notion</div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="flex items-center justify-end gap-4">
-                                                <div className="flex items-center gap-1 text-amber-500">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-                                                        <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" />
-                                                    </svg>
-                                                    <span className="text-tremor-default font-medium">Pending</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    <Badge variant="neutral">Getting Started</Badge>
+                                                    <Badge variant="neutral">Documentation</Badge>
+                                                    <Badge variant="neutral">Product Roadmap</Badge>
+                                                    <Badge variant="neutral">Team Wiki</Badge>
+                                                    <Badge variant="neutral">+3 more</Badge>
                                                 </div>
-                                                <button type="button" className="p-1 text-tremor-content hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:text-dark-tremor-content-strong">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-                                                        <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
-                                                    </svg>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant="success">
+                                                    Enabled
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <button type="button" className="p-1.5 rounded-full text-tremor-content hover:bg-tremor-background-subtle hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:bg-dark-tremor-background-subtle dark:hover:text-dark-tremor-content-strong transition-all">
+                                                    <Settings className="size-4" />
                                                 </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-4">
-                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
-                                                    <IntercomIcon className="size-5 text-blue-400" aria-hidden={true} />
-                                                </span>
-                                                <div>
-                                                    <div className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">Intercom</div>
-                                                    <div className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Customer messaging and support platform.</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="flex items-center justify-end gap-4">
-                                                <div className="flex items-center gap-1 text-red-500">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-                                                        <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clipRule="evenodd" />
-                                                    </svg>
-                                                    <span className="text-tremor-default font-medium">Disconnected</span>
-                                                </div>
-                                                <button type="button" className="p-1 text-tremor-content hover:text-tremor-content-strong dark:text-dark-tremor-content dark:hover:text-dark-tremor-content-strong">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-                                                        <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </div>
                         </div>
                         <Divider />
-
+                        <h3 className="text-tremor-title font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong my-4">Discover new connections</h3>
                         <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {data.map((item) => (
                                 <Card
@@ -434,6 +414,8 @@ export default function Example() {
                         </dl>
                     </TabsContent>
                     <TabsContent value="more-connections">
+                        <h3 className="text-tremor-title font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong mb-4">Discover more connections</h3>
+
                         <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {data.map((item) => (
                                 <Card
@@ -504,6 +486,7 @@ export default function Example() {
                         </dl>
                     </TabsContent>
                     <TabsContent value="empty-state">
+                        <h3 className="text-tremor-title font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong mb-4">My connections</h3>
                         <div className="relative mb-12 border border-tremor-border rounded-tremor-default dark:border-dark-tremor-border">
                             <ul
                                 role="list"
@@ -532,6 +515,77 @@ export default function Example() {
                                 </button>
                             </div>
                         </div>
+                        <Divider />
+                        <h3 className="text-tremor-title font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong mb-4">Discover more connections</h3>
+                        <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {data.map((item) => (
+                                <Card
+                                    key={item.name}
+                                    className="flex flex-col justify-between overflow-hidden p-0"
+                                >
+                                    <div className="p-6">
+                                        <div className="flex flex-wrap items-center justify-between gap-4">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background dark:border-dark-tremor-border dark:bg-dark-tremor-background">
+                                                    <item.icon className="size-5" aria-hidden={true} />
+                                                    {item.isHomeBuilt ? (
+                                                        <span className="absolute -right-1 -top-1 flex size-4 shrink-0 items-center justify-center rounded-tremor-full bg-tremor-brand ring-2 ring-tremor-brand-inverted dark:bg-dark-tremor-brand dark:ring-dark-tremor-background">
+                                                            <RiStarSFill
+                                                                className="size-2.5 text-tremor-brand-inverted dark:text-tremor-brand-inverted"
+                                                                aria-hidden={true}
+                                                            />
+                                                        </span>
+                                                    ) : null}
+                                                </span>
+                                                <dt
+                                                    className={classNames(
+                                                        item.status === 'coming soon'
+                                                            ? 'text-tremor-content-subtle dark:text-dark-tremor-content-subtle'
+                                                            : 'text-tremor-content-strong dark:text-dark-tremor-content-strong',
+                                                        'text-tremor-default font-medium',
+                                                    )}
+                                                >
+                                                    <a href={item.href} className="focus:outline-none">
+                                                        {/* Extend link to entire card */}
+                                                        <span className="absolute inset-0" aria-hidden={true} />
+                                                        {item.name}
+                                                    </a>
+                                                </dt>
+                                            </div>
+                                            {item.status === 'coming soon' ? (
+                                                <span className="inline-flex items-center rounded-tremor-small bg-tremor-background-muted px-2 py-0.5 text-tremor-label font-medium text-tremor-content ring-1 ring-inset ring-tremor-ring dark:bg-dark-tremor-background-muted dark:text-dark-tremor-content dark:ring-dark-tremor-ring">
+                                                    {item.status}
+                                                </span>
+                                            ) : null}
+                                        </div>
+
+                                        <dd
+                                            className={classNames(
+                                                item.status === 'coming soon'
+                                                    ? 'text-tremor-content-subtle dark:text-dark-tremor-content-subtle'
+                                                    : 'text-tremor-content dark:text-dark-tremor-content',
+                                                'mt-3 text-tremor-default leading-6',
+                                            )}
+                                        >
+                                            {item.description}
+                                        </dd>
+                                    </div>
+                                    {item.status !== 'coming soon' ? (
+                                        <div className="border-t border-tremor-border bg-tremor-background-muted px-6 py-3 dark:border-dark-tremor-border dark:bg-dark-tremor-background-muted">
+                                            <div className="flex items-center space-x-2">
+                                                <RiArrowDownCircleLine
+                                                    className="size-5 text-tremor-content-subtle dark:text-dark-tremor-content-subtle"
+                                                    aria-hidden={true}
+                                                />
+                                                <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                                                    {item.installations} Installations
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                </Card>
+                            ))}
+                        </dl>
                     </TabsContent>
                 </div>
             </Tabs>

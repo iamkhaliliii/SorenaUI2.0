@@ -1,5 +1,7 @@
 // Tremor BarList [v1.0.0]
 
+"use client"
+
 import React from "react"
 
 import { cx, focusRing } from "@/lib/utils"

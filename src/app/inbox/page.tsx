@@ -2,14 +2,16 @@
 import { Badge } from "@/components/Badge"
 import { Button } from "@/components/Button"
 import { Card } from "@/components/Card"
+import { CategoryBar } from "@/components/CategoryBar"
 import { Input } from "@/components/Input"
+import { TabbedBarList } from "@/components/TabbedBarList"
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger
 } from "@/components/Tabs"
-import { Calendar, ChevronDown, Clock, ExternalLink, Flag, HelpCircle, Info, MessageCircle, MoreHorizontal, PaperclipIcon, SendHorizontal, Smile, Star, Tag, ThumbsUp, User } from "lucide-react"
+import { BarChart2, Clock, ExternalLink, Info, MessageCircle, MoreHorizontal, PaperclipIcon, SendHorizontal, Smile, Star, Tag, ThumbsDown, ThumbsUp, TrendingUp, User } from "lucide-react"
 import { useEffect, useState } from "react"
 
 // Get access to the parent layout's setShowDrawer function
@@ -18,6 +20,7 @@ declare global {
         inboxLayoutContext?: {
             setShowDrawer: (show: boolean) => void;
             closeDrawer: () => void;
+            setActiveTab?: (tab: string) => void;
         };
     }
 }
@@ -42,6 +45,16 @@ export default function InboxPage() {
         // Clean up event listener
         return () => window.removeEventListener('resize', checkIsMobile)
     }, [])
+
+    // Connect to layout context for tab synchronization
+    useEffect(() => {
+        // Check if the context exists and has a setActiveTab method
+        if (window.inboxLayoutContext) {
+            window.inboxLayoutContext.setActiveTab = (tab: string) => {
+                setActiveTab(tab);
+            };
+        }
+    }, []);
 
     const selectedMessageData = {
         id: "1",
@@ -132,18 +145,19 @@ export default function InboxPage() {
                         {/* Show badges in action area on mobile */}
                         {isMobile && (
                             <div className="flex items-center gap-1.5 mr-1">
-                                <span className="inline-flex items-center rounded-md bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800">
-                                    Customer
+                                <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10 dark:bg-emerald-900/20 dark:text-emerald-400 dark:ring-emerald-800">
+                                    <MessageCircle className="h-3 w-3 mr-1" />
+                                    Request
                                 </span>
                                 {selectedMessageData.priority && (
-                                    <span className={`text-xs flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-opacity-50 ring-1 ring-inset ${selectedMessageData.priority === 'high'
-                                        ? 'bg-red-50 text-red-700 ring-red-700/10 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-800'
+                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${selectedMessageData.priority === 'high'
+                                        ? 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-950/30 dark:text-red-400 dark:ring-red-500/20'
                                         : selectedMessageData.priority === 'medium'
-                                            ? 'bg-amber-50 text-amber-700 ring-amber-700/10 dark:bg-amber-900/20 dark:text-amber-400 dark:ring-amber-800'
-                                            : 'bg-gray-50 text-gray-700 ring-gray-700/10 dark:bg-gray-900/20 dark:text-gray-400 dark:ring-gray-800'
+                                            ? 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950/30 dark:text-amber-400 dark:ring-amber-500/20'
+                                            : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20 dark:bg-gray-950/30 dark:text-gray-400 dark:ring-gray-500/20'
                                         }`}>
-                                        <Flag className="h-3 w-3" />
-                                        {selectedMessageData.priority.charAt(0).toUpperCase()}
+                                        <span className="mr-1 h-1.5 w-1.5 rounded-full bg-current"></span>
+                                        {selectedMessageData.priority.charAt(0).toUpperCase() + selectedMessageData.priority.slice(1)}
                                     </span>
                                 )}
                             </div>
@@ -151,20 +165,23 @@ export default function InboxPage() {
 
                         {/* Only show larger badges on desktop */}
                         <div className={`${isMobile ? 'hidden' : 'flex items-center flex-wrap gap-x-3 gap-y-1'}`}>
-                            <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800">
-                                Customer
+                            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10 dark:bg-emerald-900/20 dark:text-emerald-400 dark:ring-emerald-800">
+                                <MessageCircle className="h-3 w-3 mr-1" />
+                                Request
                             </span>
                             <span className="text-xs text-gray-500 flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
                                 {selectedMessageData.timestamp}
                             </span>
                             {selectedMessageData.priority && (
-                                <span className={`text-xs flex items-center gap-1 ${selectedMessageData.priority === 'high' ? 'text-red-600 dark:text-red-400' :
-                                    selectedMessageData.priority === 'medium' ? 'text-amber-600 dark:text-amber-400' :
-                                        'text-gray-600 dark:text-gray-400'
+                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${selectedMessageData.priority === 'high'
+                                    ? 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-950/30 dark:text-red-400 dark:ring-red-500/20'
+                                    : selectedMessageData.priority === 'medium'
+                                        ? 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950/30 dark:text-amber-400 dark:ring-amber-500/20'
+                                        : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20 dark:bg-gray-950/30 dark:text-gray-400 dark:ring-gray-500/20'
                                     }`}>
-                                    <Flag className="h-3 w-3" />
-                                    {selectedMessageData.priority.charAt(0).toUpperCase() + selectedMessageData.priority.slice(1)} Priority
+                                    <span className="mr-1 h-1.5 w-1.5 rounded-full bg-current"></span>
+                                    {selectedMessageData.priority.charAt(0).toUpperCase() + selectedMessageData.priority.slice(1)}
                                 </span>
                             )}
                         </div>
@@ -320,151 +337,392 @@ export default function InboxPage() {
                 <div className={`h-full ${activeTab === "insights" ? "block" : "hidden"}`}>
                     <TabsContent
                         value="insights"
-                        className="h-full overflow-auto bg-gray-50 dark:bg-gray-950"
+                        className="h-full overflow-auto bg-gray-50 dark:bg-gray-950 pb-16"
                     >
                         <div className="max-w-3xl mx-auto py-6 px-4 pb-20">
-                            <div className="grid sm:grid-cols-2 gap-6">
-                                {/* Analysis Cards */}
-                                <Card className="p-4 space-y-2 overflow-hidden">
-                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                        <Flag className="h-4 w-4 text-amber-500" />
-                                        <span>Sentiment Analysis</span>
-                                    </h3>
-                                    <div className="flex flex-col">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="text-xs text-gray-500">Sentiment Score</span>
-                                            <Badge variant="default" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-                                                Neutral
-                                            </Badge>
+                            <div className="space-y-6">
+                                {/* Overview Card - Main insights in a clean, minimal design */}
+                                <Card className="p-0 overflow-hidden shadow-sm border border-gray-200 dark:border-gray-800">
+                                    {/* Header */}
+                                    <div className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-800 p-4 flex items-center justify-between">
+                                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                            <Info className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                                            Overview
+                                        </h3>
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 rounded-md px-2 py-0.5 flex items-center">
+                                                <span className="text-xs font-medium text-blue-700 dark:text-blue-300">AI Confidence: 94%</span>
+                                                <div className="flex ml-1.5">
+                                                    <button className="h-4 w-4 text-gray-400 hover:text-green-500 dark:text-gray-500 dark:hover:text-green-400">
+                                                        <ThumbsUp className="h-3 w-3" />
+                                                    </button>
+                                                    <button className="h-4 w-4 text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400">
+                                                        <ThumbsDown className="h-3 w-3" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <span className="text-xs text-gray-500 flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">
+                                                <span className="font-mono">ID:</span>
+                                                <span className="font-semibold">#12345</span>
+                                            </span>
                                         </div>
-                                        <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                            <div className="h-full bg-amber-500 rounded-full" style={{ width: '50%' }}></div>
+                                    </div>
+
+                                    {/* Feature request card */}
+                                    <div className="px-4 py-5">
+                                        <div className="bg-gradient-to-r from-blue-50 to-blue-50/30 dark:from-blue-950/40 dark:to-blue-900/10 p-5 rounded-lg border border-blue-100 dark:border-blue-900/50 shadow-sm">
+                                            <div className="flex items-start justify-between mb-3">
+                                                <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Emoji reactions</h4>
+                                                <div className="flex -space-x-1">
+                                                    <div className="h-6 w-6 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/70 dark:text-blue-300 flex items-center justify-center font-medium text-xs ring-2 ring-white dark:ring-gray-900">
+                                                        JK
+                                                    </div>
+                                                    <div className="h-6 w-6 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/70 dark:text-emerald-300 flex items-center justify-center font-medium text-xs ring-2 ring-white dark:ring-gray-900">
+                                                        FA
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300 mb-4">
+                                                User is requesting the ability to react with emojis to direct messages to improve engagement and interaction between users.
+                                            </p>
+                                            <div className="flex flex-wrap gap-2">
+                                                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-950/30 dark:text-emerald-400 dark:ring-emerald-500/20">
+                                                    <span className="mr-1 h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                                                    Prioritized
+                                                </span>
+                                                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20 dark:bg-blue-950/30 dark:text-blue-400 dark:ring-blue-500/20">
+                                                    <span className="mr-1 h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                                                    In Roadmap
+                                                </span>
+                                                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-600/20 dark:bg-purple-950/30 dark:text-purple-400 dark:ring-purple-500/20">
+                                                    <span className="mr-1 h-1.5 w-1.5 rounded-full bg-purple-500"></span>
+                                                    Q2 2023
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="flex justify-between text-[10px] text-gray-500 mt-1">
-                                            <span>Negative</span>
-                                            <span>Neutral</span>
-                                            <span>Positive</span>
+                                    </div>
+
+                                    {/* Content Analysis Section - NEW */}
+                                    <div className="px-4 pb-5">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md p-3">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <h5 className="text-xs font-medium text-gray-500">Source</h5>
+                                                    <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-1.5 py-0.5 rounded">Bettermode</span>
+                                                </div>
+                                                <div className="text-xs text-gray-600 dark:text-gray-400">
+                                                    Request submitted through the community platform on May 15, 2023.
+                                                </div>
+                                            </div>
+                                            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md p-3">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <h5 className="text-xs font-medium text-gray-500">Routing</h5>
+                                                    <span className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 px-1.5 py-0.5 rounded">Product</span>
+                                                </div>
+                                                <div className="text-xs text-gray-600 dark:text-gray-400">
+                                                    Content should be routed to the Product team for consideration.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Metrics grid */}
+                                    <div className="grid grid-cols-2 border-t border-gray-200 dark:border-gray-800">
+                                        {/* Intent & Emotion */}
+                                        <div className="border-r border-gray-200 dark:border-gray-800 p-4">
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                                                            <MessageCircle className="h-3.5 w-3.5" />
+                                                            Intent
+                                                        </span>
+                                                        <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded">
+                                                            Request
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-emerald-500 rounded-full" style={{ width: "75%" }}></div>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                                                            <Smile className="h-3.5 w-3.5" />
+                                                            Emotion
+                                                        </span>
+                                                        <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-1.5 py-0.5 rounded">
+                                                            Gratitude
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-blue-500 rounded-full" style={{ width: "60%" }}></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Sentiment & Volume */}
+                                        <div className="p-4">
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                                                            <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+                                                            Sentiment Trend
+                                                        </span>
+                                                        <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                                            +12% <span className="text-gray-500">(increasing)</span>
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-gradient-to-r from-amber-500 to-emerald-500 rounded-full" style={{ width: "70%" }}></div>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                                                            <BarChart2 className="h-3.5 w-3.5" />
+                                                            Volume
+                                                        </span>
+                                                        <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                                            24 <span className="text-gray-500">(last 30 days)</span>
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-indigo-500 rounded-full" style={{ width: "40%" }}></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Theme & Similarity Analysis - NEW */}
+                                    <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                                Theme Summary
+                                            </h3>
+                                        </div>
+                                        <div className="bg-gray-50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-800 rounded-md p-3 mb-3">
+                                            <p className="text-xs text-gray-700 dark:text-gray-300 italic">
+                                                "Users frequently request emoji reactions as a lightweight way to acknowledge messages without typing a full response. This feature is seen as essential for modern messaging platforms and could increase overall engagement."
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h4 className="text-xs font-medium text-gray-600 dark:text-gray-400">Common Phrases</h4>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 mb-3">
+                                            <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded">emoji reactions</span>
+                                            <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded">quick response</span>
+                                            <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded">like messages</span>
+                                            <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded">express feelings</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Chart section */}
+                                    <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+                                        <TabbedBarList />
+                                    </div>
+
+                                    {/* Insight note */}
+                                    <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+                                        <div className="flex items-start gap-3 bg-amber-50 dark:bg-amber-950/30 p-3 rounded-lg border border-amber-100 dark:border-amber-900/50">
+                                            <div className="h-6 w-6 rounded-full bg-amber-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <Info className="h-3.5 w-3.5" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">High Priority Insight</h4>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400">Feature request has significant community support based on sentiment analysis and similar requests.</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </Card>
 
-                                <Card className="p-4 space-y-2">
-                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                        <User className="h-4 w-4 text-blue-500" />
-                                        <span>Customer Profile</span>
-                                    </h3>
-                                    <div className="space-y-3 text-xs">
-                                        <div className="flex items-start">
-                                            <span className="w-24 text-gray-500">User ID</span>
-                                            <span className="text-gray-700 dark:text-gray-300 font-mono">#12345</span>
+                                {/* Details Card - Classic Style */}
+                                <Card className="divide-y divide-gray-200 dark:divide-gray-800">
+                                    {/* Tags Section */}
+                                    <div className="p-5">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+                                                <Tag className="h-4 w-4 text-gray-500" />
+                                                Tags
+                                            </h3>
                                         </div>
-                                        <div className="flex items-start">
-                                            <span className="w-24 text-gray-500">Joined</span>
-                                            <span className="text-gray-700 dark:text-gray-300">5 months ago</span>
-                                        </div>
-                                        <div className="flex items-start">
-                                            <span className="w-24 text-gray-500">Activity</span>
-                                            <span className="text-gray-700 dark:text-gray-300">15 previous messages</span>
+                                        <div className="flex flex-wrap gap-2">
+                                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                                                Product
+                                            </span>
+                                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                                                General
+                                            </span>
+                                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                                                Enterprise
+                                            </span>
                                         </div>
                                     </div>
-                                </Card>
 
-                                {/* Summary Card */}
-                                <Card className="p-4 space-y-3 sm:col-span-2">
-                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                        <MessageCircle className="h-4 w-4 text-indigo-500" />
-                                        <span>Message Summary</span>
-                                    </h3>
-                                    <div className="bg-indigo-50 border border-indigo-100 rounded-md p-3 text-sm text-indigo-700 dark:bg-indigo-900/20 dark:border-indigo-800/30 dark:text-indigo-400">
-                                        User is requesting the ability to react with emojis to direct messages in the Bettermode platform.
+                                    {/* Details Section */}
+                                    <div className="p-5">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+                                                <Info className="h-4 w-4 text-gray-500" />
+                                                Conversation Details
+                                            </h3>
+                                        </div>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex items-start">
+                                                <span className="w-40 text-gray-500">Posted in:</span>
+                                                <span className="text-gray-700 dark:text-gray-300">Support Forum</span>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <span className="w-40 text-gray-500">Time:</span>
+                                                <span className="text-gray-700 dark:text-gray-300">2 hours</span>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <span className="w-40 text-gray-500">Time to response:</span>
+                                                <span className="text-gray-700 dark:text-gray-300">2 hours</span>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <h4 className="text-xs font-medium text-gray-500 mt-2">Key Insights</h4>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                                        <div className="bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-800 flex items-start">
-                                            <HelpCircle className="h-4 w-4 text-blue-500 mr-2 mt-0.5" />
-                                            <span className="text-gray-700 dark:text-gray-300">Feature request for emoji reactions</span>
+                                    {/* User Data Section */}
+                                    <div className="p-5">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+                                                <User className="h-4 w-4 text-gray-500" />
+                                                User Data
+                                            </h3>
                                         </div>
-                                        <div className="bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-800 flex items-start">
-                                            <ThumbsUp className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
-                                            <span className="text-gray-700 dark:text-gray-300">Positive engagement with platform features</span>
-                                        </div>
-                                    </div>
-                                </Card>
-
-                                {/* Details */}
-                                <Card className="p-4 space-y-3 sm:col-span-2">
-                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <Info className="h-4 w-4 text-gray-500" />
-                                            <span>Message Details</span>
-                                        </div>
-                                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                            <ChevronDown className="h-4 w-4" />
-                                        </button>
-                                    </h3>
-                                    <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
-                                        <div className="flex items-start">
-                                            <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
-                                                <Tag className="h-3.5 w-3.5" />
-                                                <span>Category</span>
-                                            </span>
-                                            <span className="text-xs text-gray-700 dark:text-gray-300">Feature Requests</span>
-                                        </div>
-                                        <div className="flex items-start">
-                                            <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
-                                                <Calendar className="h-3.5 w-3.5" />
-                                                <span>Created</span>
-                                            </span>
-                                            <span className="text-xs text-gray-700 dark:text-gray-300">3 hours ago</span>
-                                        </div>
-                                        <div className="flex items-start">
-                                            <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
-                                                <Clock className="h-3.5 w-3.5" />
-                                                <span>Response</span>
-                                            </span>
-                                            <span className="text-xs text-gray-700 dark:text-gray-300">42 minutes</span>
-                                        </div>
-                                        <div className="flex items-start">
-                                            <span className="w-24 flex items-center gap-1.5 text-xs text-gray-500">
-                                                <Flag className="h-3.5 w-3.5" />
-                                                <span>Status</span>
-                                            </span>
-                                            <Badge variant="default" className="bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
-                                                In progress
-                                            </Badge>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex items-start">
+                                                <span className="w-40 text-gray-500">Name:</span>
+                                                <span className="text-gray-700 dark:text-gray-300">Amir Khalili</span>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <span className="w-40 text-gray-500">Website:</span>
+                                                <span className="text-gray-700 dark:text-gray-300">community.bettermode.com</span>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <span className="w-40 text-gray-500">Email:</span>
+                                                <span className="text-gray-700 dark:text-gray-300">amir@bettermode.com</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </Card>
 
-                                {/* Tags */}
-                                <Card className="p-4 space-y-3 sm:col-span-2">
-                                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <Tag className="h-4 w-4 text-gray-500" />
-                                            <span>Tags</span>
+                                    {/* Intent Analysis Section */}
+                                    <div className="p-5">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+                                                <MessageCircle className="h-4 w-4 text-gray-500" />
+                                                Intent Analysis
+                                            </h3>
                                         </div>
-                                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                            <ChevronDown className="h-4 w-4" />
-                                        </button>
-                                    </h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                                            <Tag className="h-3 w-3 mr-1" />
-                                            feature-request
-                                        </Badge>
-                                        <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                                            <Tag className="h-3 w-3 mr-1" />
-                                            messaging
-                                        </Badge>
-                                        <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                                            <Tag className="h-3 w-3 mr-1" />
-                                            reactions
-                                        </Badge>
-                                        <Badge variant="neutral" className="rounded-full py-1 px-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                                            <Tag className="h-3 w-3 mr-1" />
-                                            emoji
-                                        </Badge>
+                                        <div className="space-y-4">
+                                            <CategoryBar
+                                                values={[10, 5, 75, 5, 5, 0, 0, 0]}
+                                                colors={["gray", "gray", "emerald", "gray", "gray", "gray", "gray", "gray"]}
+                                                marker={{ value: 75, tooltip: "Request: 75%" }}
+                                                className="w-full"
+                                            />
+                                            <div className="grid grid-cols-2 gap-2 text-xs">
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-gray-400"></div>
+                                                    <span>Question (10%)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-gray-400"></div>
+                                                    <span>Bug (5%)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-emerald-500"></div>
+                                                    <span>Request (75%)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-gray-400"></div>
+                                                    <span>Complaint (5%)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-gray-400"></div>
+                                                    <span>Objection (5%)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Emotion Analysis Section */}
+                                    <div className="p-5">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+                                                <Smile className="h-4 w-4 text-gray-500" />
+                                                Emotion Analysis
+                                            </h3>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <CategoryBar
+                                                values={[10, 5, 0, 15, 60, 10]}
+                                                colors={["gray", "gray", "gray", "gray", "blue", "gray"]}
+                                                marker={{ value: 60, tooltip: "Gratitude: 60%" }}
+                                                className="w-full"
+                                            />
+                                            <div className="grid grid-cols-2 gap-2 text-xs">
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-gray-400"></div>
+                                                    <span>Frustration (10%)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-gray-400"></div>
+                                                    <span>Confusion (5%)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-gray-400"></div>
+                                                    <span>Joy (15%)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-blue-500"></div>
+                                                    <span>Gratitude (60%)</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-3 rounded-sm bg-gray-400"></div>
+                                                    <span>Disappointment (10%)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Contributors Section */}
+                                    <div className="p-5">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+                                                <User className="h-4 w-4 text-gray-500" />
+                                                Contributors
+                                            </h3>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-full bg-cover bg-center" style={{ backgroundColor: "#f3f4f6" }}></div>
+                                                    <span className="text-sm">Kimberly Weidner</span>
+                                                </div>
+                                                <span className="text-xs text-gray-500">Author</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-full bg-cover bg-center" style={{ backgroundColor: "#f3f4f6" }}></div>
+                                                    <span className="text-sm">Joe Workman</span>
+                                                </div>
+                                                <span className="text-xs text-gray-500">Member</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-full bg-cover bg-center" style={{ backgroundColor: "#f3f4f6" }}></div>
+                                                    <span className="text-sm">Jennifer Serrat</span>
+                                                </div>
+                                                <span className="text-xs text-gray-500">Member</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </Card>
                             </div>

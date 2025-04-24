@@ -1,4 +1,5 @@
 // Tremor Custom chartColors
+import { cx } from "./utils"
 
 export type ColorUtility = "bg" | "stroke" | "fill" | "text"
 
@@ -93,6 +94,18 @@ export const chartColors = {
     fill: "fill-gray-300 dark:fill-gray-700",
     text: "text-gray-300 dark:text-gray-700",
   },
+  lime: {
+    bg: "bg-lime-500 dark:bg-lime-500",
+    stroke: "stroke-lime-500 dark:stroke-lime-500",
+    fill: "fill-lime-500 dark:fill-lime-500",
+    text: "text-lime-500 dark:text-lime-500",
+  },
+  fuchsia: {
+    bg: "bg-fuchsia-500 dark:bg-fuchsia-500",
+    stroke: "stroke-fuchsia-500 dark:stroke-fuchsia-500",
+    fill: "fill-fuchsia-500 dark:fill-fuchsia-500",
+    text: "text-fuchsia-500 dark:text-fuchsia-500",
+  },
 } as const satisfies {
   [color: string]: {
     [key in ColorUtility]: string
@@ -122,6 +135,8 @@ export const chartGradientColors = {
     "from-orange-200 to-orange-500 dark:from-orange-200/10 dark:to-orange-400",
   pink: "from-pink-200 to-pink-500 dark:from-pink-200/10 dark:to-pink-400",
   red: "from-red-200 to-red-500 dark:from-red-200/10 dark:to-red-400",
+  lime: "from-lime-200 to-lime-500 dark:from-lime-200/10 dark:to-lime-400",
+  fuchsia: "from-fuchsia-200 to-fuchsia-500 dark:from-fuchsia-200/10 dark:to-fuchsia-400",
 } as const satisfies Record<string, string>
 
 export const chartConditionalColors = {
@@ -215,6 +230,18 @@ export const chartConditionalColors = {
     high: "fill-gray-400 dark:fill-gray-500",
     critical: "fill-gray-500 dark:fill-gray-600",
   },
+  lime: {
+    low: "fill-lime-200 dark:fill-lime-300",
+    medium: "fill-lime-300 dark:fill-lime-400",
+    high: "fill-lime-400 dark:fill-lime-500",
+    critical: "fill-lime-500 dark:fill-lime-600",
+  },
+  fuchsia: {
+    low: "fill-fuchsia-200 dark:fill-fuchsia-300",
+    medium: "fill-fuchsia-300 dark:fill-fuchsia-400",
+    high: "fill-fuchsia-400 dark:fill-fuchsia-500",
+    critical: "fill-fuchsia-500 dark:fill-fuchsia-600",
+  },
 }
 
 export type AvailableChartConditionalColorsKeys = keyof typeof chartColors
@@ -225,26 +252,36 @@ export const AvailableChartColors: AvailableChartColorsKeys[] = Object.keys(
 
 export const constructCategoryColors = (
   categories: string[],
-  colors: AvailableChartColorsKeys[],
-): Map<string, AvailableChartColorsKeys> => {
-  const categoryColors = new Map<string, AvailableChartColorsKeys>()
-  categories.forEach((category, index) => {
-    categoryColors.set(category, colors[index % colors.length])
+  colors: AvailableChartColorsKeys[]
+): Map<string, string> => {
+  const categoryColors = new Map<string, string>()
+
+  categories.forEach((category, idx) => {
+    categoryColors.set(
+      category,
+      colors[idx % colors.length] || AvailableChartColors[idx % AvailableChartColors.length]
+    )
   })
+
   return categoryColors
 }
 
 export const getColorClassName = (
   color: AvailableChartColorsKeys,
-  type: ColorUtility,
+  type: "stroke" | "fill" | "text" | "bg"
 ): string => {
-  const fallbackColor = {
-    bg: "bg-gray-500",
-    stroke: "stroke-gray-500",
-    fill: "fill-gray-500",
-    text: "text-gray-500",
+  switch (type) {
+    case "stroke":
+      return cx(`${color === "gray" ? "stroke-gray-500" : `stroke-${color}-500`}`)
+    case "fill":
+      return cx(`${color === "gray" ? "fill-gray-500" : `fill-${color}-500`}`)
+    case "text":
+      return cx(`${color === "gray" ? "text-gray-500" : `text-${color}-500`}`)
+    case "bg":
+      return cx(`${color === "gray" ? "bg-gray-500" : `bg-${color}-500`}`)
+    default:
+      return ""
   }
-  return chartColors[color]?.[type] ?? fallbackColor[type]
 }
 
 export const getGradientColorClassName = (
@@ -276,12 +313,13 @@ export const getConditionalColorClassName = (
 
 export const getYAxisDomain = (
   autoMinValue: boolean,
-  minValue: number | undefined,
-  maxValue: number | undefined,
-) => {
-  const minDomain = autoMinValue ? "auto" : (minValue ?? 0)
-  const maxDomain = maxValue ?? "auto"
-  return [minDomain, maxDomain]
+  minValue?: number,
+  maxValue?: number
+): [any, any] => {
+  return [
+    autoMinValue ? "auto" : minValue ?? 0,
+    maxValue !== undefined && maxValue !== null ? maxValue : "auto",
+  ]
 }
 
 // Tremor Raw hasOnlyOneValueForKey [v0.1.0]

@@ -1,7 +1,7 @@
 "use client"
 import { Badge } from "@/components/Badge"
 import { Button } from "@/components/Button"
-import { AlertCircle, Archive, Bell, CornerDownRight, Filter, Inbox, Menu, MessageSquare, Search, Star, X } from "lucide-react"
+import { AlertCircle, Archive, Bell, ChevronLeft, CornerDownRight, Filter, Inbox, Mail, Menu, MessageSquare, MessageSquare as MessageSquareIcon, Monitor, Search, Star, Twitter, X } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useEffect, useState } from "react"
@@ -28,6 +28,7 @@ declare global {
         inboxLayoutContext?: {
             setShowDrawer: (show: boolean) => void;
             closeDrawer: () => void;
+            setActiveTab?: (tab: string) => void;
         };
     }
 }
@@ -42,6 +43,7 @@ interface Post {
     category?: string;
     priority?: 'low' | 'medium' | 'high';
     avatarColor?: string;
+    source?: 'email' | 'slack' | 'twitter' | 'bettermode' | 'discord';
 }
 
 export default function Layout({
@@ -55,6 +57,7 @@ export default function Layout({
     const [showDrawer, setShowDrawer] = useState(false)
     const [showSidebar, setShowSidebar] = useState(false)
     const [isMobile, setIsMobile] = useState(false)
+    const [activeTab, setActiveTab] = useState("messages")
 
     useEffect(() => {
         // Check if we're on mobile on initial load
@@ -84,7 +87,8 @@ export default function Layout({
         // Add context to window object for child components to access
         window.inboxLayoutContext = {
             setShowDrawer,
-            closeDrawer: () => setShowDrawer(false)
+            closeDrawer: () => setShowDrawer(false),
+            setActiveTab: (tab: string) => setActiveTab(tab)
         };
 
         // Clean up
@@ -110,7 +114,8 @@ export default function Layout({
             isUnread: true,
             category: "Support",
             priority: "high",
-            avatarColor: "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "email"
         },
         {
             id: "2",
@@ -121,7 +126,8 @@ export default function Layout({
             isStarred: true,
             category: "Feature",
             priority: "medium",
-            avatarColor: "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "bettermode"
         },
         {
             id: "3",
@@ -129,7 +135,8 @@ export default function Layout({
             time: "2h",
             message: "Reposting this to the wish list to...",
             category: "Wishlist",
-            avatarColor: "bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "slack"
         },
         {
             id: "4",
@@ -139,7 +146,8 @@ export default function Layout({
             isUnread: true,
             category: "Bug",
             priority: "high",
-            avatarColor: "bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "bettermode"
         },
         {
             id: "5",
@@ -147,7 +155,8 @@ export default function Layout({
             time: "7h",
             message: "Is there a way to turn-off clickin...",
             category: "Question",
-            avatarColor: "bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "bettermode"
         },
         {
             id: "6",
@@ -155,7 +164,8 @@ export default function Layout({
             time: "14h",
             message: "Hello! I'm currently setting up th...",
             category: "Onboarding",
-            avatarColor: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "email"
         },
         {
             id: "7",
@@ -164,7 +174,8 @@ export default function Layout({
             message: "I would like community sign-up...",
             isStarred: true,
             category: "Feature",
-            avatarColor: "bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "twitter"
         },
         {
             id: "8",
@@ -172,7 +183,8 @@ export default function Layout({
             time: "1d",
             message: "The post time stamp on what a...",
             category: "Bug",
-            avatarColor: "bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "discord"
         },
         {
             id: "9",
@@ -180,7 +192,8 @@ export default function Layout({
             time: "1d",
             message: "I think that requiring a title for...",
             category: "Feedback",
-            avatarColor: "bg-teal-100 text-teal-600 dark:bg-teal-900/50 dark:text-teal-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "bettermode"
         },
         {
             id: "10",
@@ -188,7 +201,8 @@ export default function Layout({
             time: "1d",
             message: "null",
             priority: "low",
-            avatarColor: "bg-pink-100 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400"
+            avatarColor: "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300",
+            source: "email"
         }
     ]
 
@@ -199,6 +213,16 @@ export default function Layout({
         urgent: posts.filter(p => p.priority === 'high').length,
         starred: posts.filter(p => p.isStarred).length
     }
+
+    // Toggle between message and insight tabs
+    const handlePostClick = (post: Post) => {
+        setSelectedPost(post);
+
+        // Toggle between messages and insights tab when clicking on a different post
+        if (window.inboxLayoutContext?.setActiveTab && post.id !== selectedPost?.id) {
+            window.inboxLayoutContext.setActiveTab("messages");
+        }
+    };
 
     return (
         <>
@@ -396,35 +420,76 @@ export default function Layout({
                                 className={`border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 px-4 py-3 cursor-pointer transition-colors ${selectedPost?.id === post.id ? 'bg-gray-50 dark:bg-gray-900' : ''
                                     } ${post.isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
                                     }`}
-                                onClick={() => setSelectedPost(post)}
+                                onClick={() => handlePostClick(post)}
                             >
-                                <div className="flex items-center gap-3">
-                                    <div className={`h-9 w-9 rounded-full ${post.avatarColor || 'bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400'} flex items-center justify-center relative`}>
+                                <div className="flex items-start gap-3">
+                                    <div className={`h-7 w-7 rounded-full ${post.avatarColor} flex items-center justify-center relative text-sm font-medium`}>
                                         {post.sender.charAt(0)}
                                         {post.isUnread && (
-                                            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-white dark:border-gray-950"></span>
+                                            <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-blue-500 rounded-full border border-white dark:border-gray-950"></span>
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-center mb-1">
-                                            <p className={`text-sm ${post.isUnread ? 'font-semibold' : 'font-medium'} text-gray-900 dark:text-gray-100 truncate`}>{post.sender}</p>
-                                            <div className="flex items-center gap-1">
-                                                {post.priority === 'high' && (
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-1"></span>
+                                            <div className="flex items-center gap-1.5">
+                                                <p className={`text-xs ${post.isUnread ? 'font-semibold' : 'font-medium'} text-gray-900 dark:text-gray-100 truncate`}>{post.sender}</p>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                {post.source && (
+                                                    <div className="relative group">
+                                                        <span className={`flex items-center justify-center h-4.5 w-4.5 rounded-full ${post.source === 'email' ? 'bg-blue-50 text-blue-500 dark:bg-blue-900/30 dark:text-blue-400' :
+                                                                post.source === 'slack' ? 'bg-purple-50 text-purple-500 dark:bg-purple-900/30 dark:text-purple-400' :
+                                                                    post.source === 'twitter' ? 'bg-blue-50 text-blue-400 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                                        post.source === 'discord' ? 'bg-indigo-50 text-indigo-500 dark:bg-indigo-900/30 dark:text-indigo-400' :
+                                                                            post.source === 'bettermode' ? 'bg-emerald-50 text-emerald-500 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                                                                'bg-gray-50 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
+                                                            }`}>
+                                                            {post.source === 'email' ? <Mail className="h-3 w-3" /> :
+                                                                post.source === 'slack' ? <span className="text-[9px] font-bold">S</span> :
+                                                                    post.source === 'twitter' ? <Twitter className="h-3 w-3" /> :
+                                                                        post.source === 'discord' ? <span className="text-[9px] font-bold">D</span> :
+                                                                            post.source === 'bettermode' ? <MessageSquareIcon className="h-3 w-3" /> :
+                                                                                <Monitor className="h-3 w-3" />}
+                                                        </span>
+                                                        <div className="absolute top-0 right-full mr-1 w-auto px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none whitespace-nowrap z-10">
+                                                            Source: {post.source.charAt(0).toUpperCase() + post.source.slice(1)}
+                                                        </div>
+                                                    </div>
                                                 )}
-                                                {post.isStarred && (
-                                                    <Star className="h-3 w-3 text-yellow-500 mr-1 fill-yellow-500" />
-                                                )}
-                                                <span className="text-xs text-gray-500">{post.time}</span>
+                                                <span className="text-[10px] text-gray-500">{post.time}</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            {post.category && (
-                                                <span className="inline-block px-1.5 text-[10px] rounded-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                                                    {post.category}
-                                                </span>
-                                            )}
-                                            <p className={`text-xs ${post.isUnread ? 'text-gray-800 dark:text-gray-200' : 'text-gray-600 dark:text-gray-400'} truncate`}>{post.message}</p>
+                                            <p className={`text-xs ${post.isUnread ? 'text-gray-800 dark:text-gray-200' : 'text-gray-600 dark:text-gray-400'} truncate flex-1`}>{post.message.substring(0, 20)}...</p>
+                                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                                                {post.category && (
+                                                    <div className="relative group">
+                                                        <span className={`h-2 w-2 rounded-full inline-block ${post.category === 'Support' ? 'bg-purple-500' :
+                                                            post.category === 'Feature' ? 'bg-green-500' :
+                                                                post.category === 'Bug' ? 'bg-red-500' :
+                                                                    post.category === 'Wishlist' ? 'bg-blue-500' :
+                                                                        post.category === 'Question' ? 'bg-amber-500' :
+                                                                            post.category === 'Feedback' ? 'bg-indigo-500' :
+                                                                                post.category === 'Onboarding' ? 'bg-teal-500' :
+                                                                                    'bg-gray-500'
+                                                            }`}></span>
+                                                        <div className="absolute top-0 right-full mr-1 w-auto px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none whitespace-nowrap z-10">
+                                                            {post.category}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {post.priority && (
+                                                    <div className="relative group">
+                                                        <span className={`h-2 w-2 rounded-full inline-block ${post.priority === 'high' ? 'bg-red-500' :
+                                                            post.priority === 'medium' ? 'bg-amber-500' :
+                                                                'bg-gray-500'
+                                                            }`}></span>
+                                                        <div className="absolute top-0 right-full mr-1 w-auto px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none whitespace-nowrap z-10">
+                                                            {post.priority.charAt(0).toUpperCase() + post.priority.slice(1)} Priority
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -438,12 +503,13 @@ export default function Layout({
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-end">
                         <div className="w-full h-full bg-white dark:bg-gray-950 animate-slide-in-right flex flex-col">
                             {/* Add a visible close button for mobile as a backup */}
-                            <button
-                                className="absolute top-4 left-4 z-50 h-8 w-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+                            <Button
+                                variant="ghost"
+                                className="absolute top-4 left-4 z-50 h-8 w-8 p-0 mr-1"
                                 onClick={() => setShowDrawer(false)}
                             >
-                                <X className="h-4 w-4" />
-                            </button>
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
 
                             {/* Drawer content */}
                             <div className="flex-1 overflow-auto">
